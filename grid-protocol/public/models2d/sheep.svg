@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="94" rx="24" ry="5" fill="#000" opacity="0.3"/>
+  <!-- Fluffy wool body -->
+  <ellipse cx="46" cy="60" rx="22" ry="16" fill="#f7fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <circle cx="34" cy="54" r="8" fill="#f7fafc"/>
+  <circle cx="44" cy="50" r="9" fill="#f7fafc"/>
+  <circle cx="56" cy="52" r="8" fill="#f7fafc"/>
+  <circle cx="40" cy="68" r="7" fill="#f7fafc"/>
+  <circle cx="52" cy="68" r="7" fill="#f7fafc"/>
+  <!-- Black face & legs -->
+  <rect x="34" y="72" width="4" height="20" fill="#2d3748"/>
+  <rect x="54" y="72" width="4" height="20" fill="#2d3748"/>
+  <ellipse cx="68" cy="56" rx="7" ry="6" fill="#2d3748"/>
+</svg>

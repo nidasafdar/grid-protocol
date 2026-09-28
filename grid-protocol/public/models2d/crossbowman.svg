@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="95" rx="22" ry="5" fill="#000" opacity="0.3"/>
+  <!-- Leather Armor body -->
+  <rect x="41" y="68" width="8" height="24" fill="#2d3748"/>
+  <rect x="51" y="68" width="8" height="24" fill="#2d3748"/>
+  <path d="M34 32 L66 32 L68 68 L32 68 Z" fill="#744210"/>
+  <!-- Crossbow in hands -->
+  <rect x="48" y="44" width="28" height="5" fill="#8d6e63"/>
+  <path d="M72 32 Q78 46 72 60" fill="none" stroke="#a0aec0" stroke-width="3"/>
+  <line x1="72" y1="32" x2="52" y2="46" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="72" y1="60" x2="52" y2="46" stroke="#cbd5e0" stroke-width="1"/>
+  <!-- Steel Kettle Helmet -->
+  <circle cx="50" cy="22" r="11" fill="#fbd38d"/>
+  <ellipse cx="50" cy="18" rx="14" ry="4" fill="#718096"/>
+  <path d="M40 18 Q50 9 60 18 Z" fill="#a0aec0"/>
+</svg>

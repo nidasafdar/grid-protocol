@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="82" rx="30" ry="5" fill="#000" opacity="0.2"/>
+  <!-- Bone shaft -->
+  <rect x="65" y="44" width="22" height="7" rx="3" fill="#edf2f7" stroke="#cbd5e0" stroke-width="1.5"/>
+  <circle cx="86" cy="43" r="4" fill="#edf2f7"/>
+  <circle cx="86" cy="52" r="4" fill="#edf2f7"/>
+  <!-- Roasted meat joint -->
+  <ellipse cx="44" cy="50" rx="26" ry="18" fill="#9b2c2c" stroke="#742a2a" stroke-width="2"/>
+  <ellipse cx="32" cy="50" rx="10" ry="12" fill="#c53030"/>
+</svg>

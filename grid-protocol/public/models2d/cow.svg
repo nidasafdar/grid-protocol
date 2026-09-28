@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="94" rx="34" ry="5" fill="#000" opacity="0.3"/>
+  <!-- Spotted cow body -->
+  <ellipse cx="48" cy="56" rx="28" ry="18" fill="#f7fafc" stroke="#e2e8f0"/>
+  <!-- Black Spots -->
+  <path d="M34 46 Q40 40 46 48 Q42 56 34 52 Z" fill="#2d3748"/>
+  <path d="M54 52 Q62 48 64 58 Q56 64 52 58 Z" fill="#2d3748"/>
+  <!-- Legs -->
+  <rect x="28" y="66" width="6" height="25" fill="#f7fafc" stroke="#cbd5e0"/>
+  <rect x="36" y="66" width="6" height="25" fill="#f7fafc" stroke="#cbd5e0"/>
+  <rect x="56" y="66" width="6" height="25" fill="#f7fafc" stroke="#cbd5e0"/>
+  <rect x="64" y="66" width="6" height="25" fill="#f7fafc" stroke="#cbd5e0"/>
+  <!-- Pink Udder -->
+  <ellipse cx="38" cy="70" rx="6" ry="4" fill="#fed7d7"/>
+  <!-- Head & Horns -->
+  <ellipse cx="78" cy="46" rx="10" ry="8" fill="#f7fafc" stroke="#cbd5e0"/>
+  <path d="M74 40 Q74 34 78 35" stroke="#ecc94b" stroke-width="2" fill="none"/>
+  <path d="M82 40 Q82 34 78 35" stroke="#ecc94b" stroke-width="2" fill="none"/>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad_firewatch_well" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3182ce"/>
+      <stop offset="100%" stop-color="#1a202c"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Badge -->
+  <rect x="10" y="10" width="80" height="80" rx="16" fill="url(#grad_firewatch_well)" stroke="#d69e2e" stroke-width="2"/>
+  <circle cx="50" cy="46" r="24" fill="#ffffff" opacity="0.15"/>
+  <!-- Decorative Inner Border -->
+  <rect x="14" y="14" width="72" height="72" rx="12" fill="none" stroke="#ecc94b" stroke-dasharray="4,4" opacity="0.5"/>
+  <!-- Monogram / Icon Symbol -->
+  <text x="50" y="54" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="#fefcbf" text-anchor="middle">F</text>
+  <!-- Label Banner -->
+  <rect x="12" y="74" width="76" height="14" rx="4" fill="#000000" opacity="0.6"/>
+  <text x="50" y="84" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#ecc94b" text-anchor="middle">FIREWATCH WELL</text>
+</svg>

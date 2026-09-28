@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M20 30 L36 18 L64 18 L80 30 L72 45 L62 38 L65 85 L35 85 L38 38 L28 45 Z" fill="#9c4221" stroke="#652b19" stroke-width="2"/>
+  <!-- Neckline slit -->
+  <polygon points="46,18 54,18 50,30" fill="#fbd38d"/>
+  <!-- Leather belt -->
+  <rect x="36" y="55" width="28" height="5" fill="#2d3748"/>
+  <rect x="48" y="54" width="4" height="7" fill="#d69e2e"/>
+</svg>

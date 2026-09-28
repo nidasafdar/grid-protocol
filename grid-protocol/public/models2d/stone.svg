@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <polygon points="15,65 50,80 85,65 50,50" fill="#a0aec0"/>
+  <polygon points="15,65 50,80 50,92 15,77" fill="#718096"/>
+  <polygon points="85,65 50,80 50,92 85,77" fill="#4a5568"/>
+  <!-- Top Block -->
+  <polygon points="28,40 50,50 72,40 50,30" fill="#cbd5e0"/>
+  <polygon points="28,40 50,50 50,62 28,52" fill="#a0aec0"/>
+  <polygon points="72,40 50,50 50,62 72,52" fill="#718096"/>
+</svg>

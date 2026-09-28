@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GRID PROTOCOL // 11,000 km² WebGPU Empire</title>
+    <title>GRID PROTOCOL // 11,000 km² Castle & Empire Matrix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Cinzel:wght@600;700;900&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="game-root">
@@ -19,8 +19,8 @@
         <header id="viewport-hud">
           <div class="hud-chip faction-chip">
             <span class="status-indicator parrot-green"></span>
-            <span class="chip-label">FACTION:</span>
-            <strong class="chip-val">PARROT GREEN CLAN</strong>
+            <span class="chip-label">REALM:</span>
+            <strong class="chip-val">PARROT GREEN CITADEL</strong>
           </div>
           <div class="hud-chip">
             <span class="chip-label">BIOME:</span>
@@ -40,95 +40,264 @@
           </div>
         </header>
 
+        <!-- Stronghold Campfire & Popularity Float HUD -->
+        <div id="viewport-campfire-hud">
+          <div class="campfire-status-box">
+            <img src="/models2d/child.svg" class="hud-avatar" alt="Campfire Peasants">
+            <div>
+              <span class="hud-sub">PEASANT CAMPFIRE</span>
+              <strong id="campfire-status-text" class="text-green">PEASANTS ARRIVING (+2/min)</strong>
+            </div>
+          </div>
+          <div class="pitch-alert-box" id="pitch-alert-box">
+            <span class="pitch-pulse"></span>
+            <span>PITCH DITCHES ARMED</span>
+          </div>
+        </div>
+
         <!-- Viewport Navigation Hints Overlay -->
         <div id="viewport-controls-hint">
           <span>[W, A, S, D] or [Arrow Keys] Pan Camera</span>
           <span class="hint-sep">•</span>
-          <span>Click & Drag Viewport</span>
+          <span>Click & Drag World</span>
           <span class="hint-sep">•</span>
-          <span>11,000 km² Macro Matrix</span>
+          <span>Stronghold Simulation Matrix</span>
         </div>
       </main>
 
       <!-- RIGHT PANEL (30%): NATIVE HTML5 DOM CONTROL SIDEBAR -->
       <aside id="sidebar-panel">
+        <!-- Top Scribe Quote Audio Banner -->
+        <div id="scribe-banner">
+          <img src="/models2d/scribe.svg" class="scribe-avatar" alt="Scribe">
+          <div class="scribe-content">
+            <span class="scribe-tag">THE CASTLE SCRIBE SPEAKS:</span>
+            <blockquote id="scribe-text">"The people love you, my Lord! Our granaries are well-stocked."</blockquote>
+          </div>
+          <button id="btn-sound-toggle" class="btn-sound" title="Toggle Voice & Audio">🔊</button>
+        </div>
+
         <!-- Empire Global Resource Header -->
         <section id="sidebar-resources-header">
-          <div class="resource-badge" title="Empire Treasury">
-            <span class="res-icon">🪙</span>
+          <div class="resource-badge" title="Royal Treasury">
+            <img src="/models2d/gold.svg" class="res-mini-icon" alt="Gold">
             <div class="res-info">
               <span class="res-tag">GOLD</span>
-              <strong class="res-number" id="res-gold">1,250</strong>
+              <strong class="res-number text-gold" id="res-gold">1,250</strong>
             </div>
           </div>
-          <div class="resource-badge" title="Food Grain Reserves">
-            <span class="res-icon">🌾</span>
+          <div class="resource-badge" title="Granary Food Reserves">
+            <img src="/models2d/bread.svg" class="res-mini-icon" alt="Food">
             <div class="res-info">
               <span class="res-tag">FOOD</span>
-              <strong class="res-number" id="res-food">840</strong>
+              <strong class="res-number text-green" id="res-food">840</strong>
             </div>
           </div>
           <div class="resource-badge" title="Raw Timber Stockpile">
-            <span class="res-icon">🪵</span>
+            <img src="/models2d/wood.svg" class="res-mini-icon" alt="Timber">
             <div class="res-info">
               <span class="res-tag">TIMBER</span>
               <strong class="res-number" id="res-timber">320</strong>
             </div>
           </div>
-          <div class="resource-badge" title="Hardened Red Bricks">
-            <span class="res-icon">🧱</span>
+          <div class="resource-badge" title="Quarried Stone Blocks">
+            <img src="/models2d/stone.svg" class="res-mini-icon" alt="Stone">
             <div class="res-info">
-              <span class="res-tag">BRICKS</span>
-              <strong class="res-number" id="res-bricks">50</strong>
+              <span class="res-tag">STONE</span>
+              <strong class="res-number" id="res-stone">180</strong>
+            </div>
+          </div>
+          <div class="resource-badge" title="Smelted Iron Ore">
+            <img src="/models2d/iron.svg" class="res-mini-icon" alt="Iron">
+            <div class="res-info">
+              <span class="res-tag">IRON</span>
+              <strong class="res-number" id="res-iron">65</strong>
+            </div>
+          </div>
+          <div class="resource-badge" title="Marsh Pitch Barrels">
+            <img src="/models2d/pitch.svg" class="res-mini-icon" alt="Pitch">
+            <div class="res-info">
+              <span class="res-tag">PITCH</span>
+              <strong class="res-number" id="res-pitch">40</strong>
             </div>
           </div>
           <div class="resource-badge" title="Citizen Population">
-            <span class="res-icon">👥</span>
+            <img src="/models2d/young_man.svg" class="res-mini-icon" alt="Pop">
             <div class="res-info">
-              <span class="res-tag">POPULATION</span>
+              <span class="res-tag">POP</span>
               <strong class="res-number" id="res-pop">28</strong>
             </div>
           </div>
-          <div class="resource-badge" title="Bey Council Loyalty Rating">
-            <span class="res-icon">⚖️</span>
+          <div class="resource-badge" title="Stronghold Popularity Meter">
+            <img src="/models2d/king.svg" class="res-mini-icon" alt="Popularity">
             <div class="res-info">
-              <span class="res-tag">LOYALTY</span>
-              <strong class="res-number" id="res-loyalty">94%</strong>
+              <span class="res-tag">POPULARITY</span>
+              <strong class="res-number text-cyan" id="res-popularity">82 / 100</strong>
             </div>
           </div>
         </section>
 
         <!-- Sidebar Navigation Tabs -->
         <nav id="sidebar-nav-tabs">
-          <button class="nav-tab active" data-tab="tab-economy">
-            <span class="tab-emoji">🛒</span>
-            <span>Market & Assets</span>
+          <button class="nav-tab active" data-tab="tab-popularity">
+            <span class="tab-emoji">👑</span>
+            <span>Castle Life</span>
+          </button>
+          <button class="nav-tab" data-tab="tab-economy">
+            <span class="tab-emoji">🪵</span>
+            <span>Economy & Herd</span>
+          </button>
+          <button class="nav-tab" data-tab="tab-armory">
+            <span class="tab-emoji">⚔️</span>
+            <span>Armory & Army</span>
           </button>
           <button class="nav-tab" data-tab="tab-citadel">
-            <span class="tab-emoji">👑</span>
-            <span>King & Citadel</span>
+            <span class="tab-emoji">🏰</span>
+            <span>Siege & King</span>
           </button>
           <button class="nav-tab" data-tab="tab-geopolitics">
             <span class="tab-emoji">🌐</span>
-            <span>Factions & Trade</span>
+            <span>Rival Lords</span>
           </button>
         </nav>
 
-        <!-- Tab 1: Market & Replicating Assets -->
-        <section id="tab-economy" class="tab-pane active">
+        <!-- TAB 1: CASTLE LIFE & STRONGHOLD POPULARITY ENGINE -->
+        <section id="tab-popularity" class="tab-pane active">
+          <!-- Popularity Score Gauge -->
+          <article class="asset-card popularity-card">
+            <div class="popularity-header">
+              <div>
+                <h4>Stronghold Popularity Meter</h4>
+                <p class="asset-desc">Campfire Threshold: 50. Above 50 peasants arrive; below 50 they leave.</p>
+              </div>
+              <div class="popularity-score-circle" id="popularity-score-display">
+                <span class="pop-val" id="pop-main-val">82</span>
+                <span class="pop-max">/100</span>
+              </div>
+            </div>
+
+            <!-- Granary Rations Selector -->
+            <div class="sub-section-title">
+              <h5>GRANARY FOOD RATIONS</h5>
+              <span class="pop-factor-badge" id="badge-ration-mod">+4 Popularity</span>
+            </div>
+            <div class="ration-button-group">
+              <button class="btn-ration" data-ration="none">No Rations (-8)</button>
+              <button class="btn-ration" data-ration="half">Half (-4)</button>
+              <button class="btn-ration" data-ration="normal">Normal (0)</button>
+              <button class="btn-ration active" data-ration="double">Double (+4)</button>
+              <button class="btn-ration" data-ration="extra">Extra (+8)</button>
+            </div>
+
+            <!-- Diet Diversity (4 Food Types) -->
+            <div class="sub-section-title">
+              <h5>DIET DIVERSITY BONUS (+1 to +4)</h5>
+              <span class="pop-factor-badge text-green" id="badge-diversity-mod">+4 Variety Max</span>
+            </div>
+            <div class="food-diversity-grid">
+              <div class="food-item-pill active" title="Bread (Baked at the bakery)">
+                <img src="/models2d/bread.svg" class="food-icon" alt="Bread">
+                <span class="food-name">Bread</span>
+                <strong class="food-qty" id="qty-food-bread">340</strong>
+              </div>
+              <div class="food-item-pill active" title="Apples (Harvested at orchard)">
+                <img src="/models2d/apples.svg" class="food-icon" alt="Apples">
+                <span class="food-name">Apples</span>
+                <strong class="food-qty" id="qty-food-apples">210</strong>
+              </div>
+              <div class="food-item-pill active" title="Cheese (Aged at dairy farm)">
+                <img src="/models2d/cheese.svg" class="food-icon" alt="Cheese">
+                <span class="food-name">Cheese</span>
+                <strong class="food-qty" id="qty-food-cheese">180</strong>
+              </div>
+              <div class="food-item-pill active" title="Meat (Hunted venison)">
+                <img src="/models2d/meat.svg" class="food-icon" alt="Meat">
+                <span class="food-name">Meat</span>
+                <strong class="food-qty" id="qty-food-meat">110</strong>
+              </div>
+            </div>
+
+            <!-- Royal Treasury: Taxes & Bribes -->
+            <div class="sub-section-title">
+              <h5>TREASURY TAXATION & BRIBES</h5>
+              <span class="pop-factor-badge" id="badge-tax-mod">No Taxes (0)</span>
+            </div>
+            <div class="tax-control-panel">
+              <div class="tax-range-labels">
+                <span>Extortionate (-24)</span>
+                <span>No Tax (0)</span>
+                <span>Bribes (+16)</span>
+              </div>
+              <input type="range" id="slider-taxes" min="-24" max="16" step="4" value="0" class="styled-range">
+              <div class="tax-summary-row">
+                <span id="tax-label-status">Tax Rate: No Taxes (+0g/citizen)</span>
+                <span class="text-gold font-mono" id="tax-revenue-calc">+0 🪙 / mo</span>
+              </div>
+            </div>
+
+            <!-- Ale & Religion Coverage -->
+            <div class="sub-section-title">
+              <h5>ALE SUPPLY & RELIGIOUS BLESSINGS</h5>
+            </div>
+            <div class="social-action-row">
+              <div class="social-card">
+                <div class="social-header">
+                  <img src="/models2d/ale.svg" class="social-icon" alt="Ale">
+                  <div>
+                    <strong>Tavern Ale Flow</strong>
+                    <small>Coverage: <span id="ale-coverage-num">75%</span></small>
+                  </div>
+                </div>
+                <button class="btn-action-small" id="btn-brew-ale">Serve Ale (+2 Pop)</button>
+              </div>
+              <div class="social-card">
+                <div class="social-header">
+                  <img src="/models2d/priest.svg" class="social-icon" alt="Church">
+                  <div>
+                    <strong>Parish Blessings</strong>
+                    <small>Blessed: <span id="blessed-pop-num">60%</span></small>
+                  </div>
+                </div>
+                <button class="btn-action-small" id="btn-priest-bless">Bless Peasants (+2 Pop)</button>
+              </div>
+            </div>
+
+            <!-- Fear Factor: Bad Things vs Good Things -->
+            <div class="sub-section-title">
+              <h5>FEAR FACTOR (CRUELTY vs. PAGEANTRY)</h5>
+              <span class="pop-factor-badge" id="fear-factor-status">Neutral Balance (0)</span>
+            </div>
+            <div class="fear-factor-toggle-row">
+              <button class="btn-fear bad" id="btn-fear-bad" title="Build Gallows & Stocks: +25% Work Speed, -Morale">
+                <img src="/models2d/gallows.svg" class="fear-icon" alt="Gallows">
+                <span>Cruelty (Gallows)</span>
+              </button>
+              <button class="btn-fear neutral active" id="btn-fear-neutral">
+                <span>Neutral</span>
+              </button>
+              <button class="btn-fear good" id="btn-fear-good" title="Build Maypoles & Gardens: +25% Troop Morale, -Work Speed">
+                <img src="/models2d/maypole.svg" class="fear-icon" alt="Maypole">
+                <span>Pageantry (Maypole)</span>
+              </button>
+            </div>
+          </article>
+        </section>
+
+        <!-- TAB 2: REPLICATING ASSETS & PHYSICAL INDUSTRY -->
+        <section id="tab-economy" class="tab-pane">
           <div class="panel-section-title">
             <h3>LIVESTOCK REPLICATION ENGINE</h3>
-            <span class="section-badge">Automated Timers</span>
+            <span class="section-badge">Autonomous Doubling</span>
           </div>
 
-          <!-- Livestock Card: Goats -->
+          <!-- Goats Card -->
           <article class="asset-card" id="card-goats">
             <div class="asset-card-header">
               <div class="asset-badge-title">
-                <span class="asset-avatar">🐐</span>
+                <img src="/models2d/goat.svg" class="asset-avatar-svg" alt="Goats">
                 <div>
                   <h4>The Shepherd's Flock (Goats)</h4>
-                  <p class="asset-desc">10-Min Exponential Doubling script [2.4]. Yields wool & meat.</p>
+                  <p class="asset-desc">10-Min Exponential Doubling. Yields passive wool & meat.</p>
                 </div>
               </div>
               <div class="asset-cost">
@@ -155,14 +324,14 @@
             </div>
           </article>
 
-          <!-- Livestock Card: Cows -->
+          <!-- Cattle Card -->
           <article class="asset-card" id="card-cows">
             <div class="asset-card-header">
               <div class="asset-badge-title">
-                <span class="asset-avatar">🐄</span>
+                <img src="/models2d/cow.svg" class="asset-avatar-svg" alt="Cattle">
                 <div>
-                  <h4>The Pastoral Pasture (Cattle)</h4>
-                  <p class="asset-desc">15-Min Doubling. Thick leather for heavy armor & massive food.</p>
+                  <h4>Pastoral Pasture (Dairy Cattle)</h4>
+                  <p class="asset-desc">15-Min Doubling. Thick leather for armor & massive food.</p>
                 </div>
               </div>
               <div class="asset-cost">
@@ -189,14 +358,14 @@
             </div>
           </article>
 
-          <!-- Livestock Card: War Horses -->
+          <!-- War Horses Card -->
           <article class="asset-card" id="card-horses">
             <div class="asset-card-header">
               <div class="asset-badge-title">
-                <span class="asset-avatar">🐎</span>
+                <img src="/models2d/horse.svg" class="asset-avatar-svg" alt="War Horses">
                 <div>
                   <h4>Equestrian Stables (War Horses)</h4>
-                  <p class="asset-desc">20-Min Doubling. Unlocks Light Cavalry & Talwar Strike Squads.</p>
+                  <p class="asset-desc">20-Min Doubling. Breeds warhorses for elite Knights.</p>
                 </div>
               </div>
               <div class="asset-cost">
@@ -223,64 +392,175 @@
             </div>
           </article>
 
-          <!-- Forestry & Brick Expansion Operations -->
+          <!-- Physical Production Operations -->
           <div class="panel-section-title">
-            <h3>FORESTRY & BRICK ERA</h3>
-            <span class="section-badge">Industrial Loop</span>
+            <h3>PHYSICAL HARVEST & INDUSTRIAL LOOPS</h3>
+            <span class="section-badge">Carried to Stockpile</span>
           </div>
-
           <div class="action-grid">
             <div class="action-tile" id="tile-chop-timber">
-              <span class="tile-icon">🪓</span>
-              <strong>Harvest Timber</strong>
-              <small>+40 Logs // Needs Forest</small>
+              <img src="/models2d/wood.svg" class="tile-icon-svg" alt="Timber">
+              <strong>Woodcutter</strong>
+              <small>+40 Logs</small>
               <button class="btn-tile" id="btn-action-harvest">Chop (10s)</button>
             </div>
-            <div class="action-tile" id="tile-replant-seedling">
-              <span class="tile-icon">🌱</span>
-              <strong>Replant Seedlings</strong>
-              <small>Prevent Soil Desertification</small>
-              <button class="btn-tile" id="btn-action-replant">Plant (-10🪙)</button>
+            <div class="action-tile" id="tile-stone-quarry">
+              <img src="/models2d/stone.svg" class="tile-icon-svg" alt="Stone">
+              <strong>Stone Quarry</strong>
+              <small>+25 Stone (Ox Tether)</small>
+              <button class="btn-tile" id="btn-action-quarry">Quarry</button>
             </div>
             <div class="action-tile" id="tile-bake-bricks">
-              <span class="tile-icon">🧱</span>
-              <strong>Bake Hard Bricks</strong>
-              <small>River Mud + Kiln Heat</small>
+              <img src="/models2d/bricks.svg" class="tile-icon-svg" alt="Bricks">
+              <strong>Bake Bricks</strong>
+              <small>Mud + Kiln Heat</small>
               <button class="btn-tile" id="btn-action-brick">Bake (+25🧱)</button>
             </div>
             <div class="action-tile" id="tile-burn-fuel">
-              <span class="tile-icon">🔥</span>
-              <strong>Burn Fuel Stockpile</strong>
-              <small>Warmth Against Winter</small>
-              <button class="btn-tile" id="btn-action-burn">Burn (-20🪵)</button>
+              <img src="/models2d/pitch.svg" class="tile-icon-svg" alt="Pitch">
+              <strong>Extract Pitch</strong>
+              <small>Tar Rig Marsh</small>
+              <button class="btn-tile" id="btn-action-pitch">Extract (+15🛢️)</button>
             </div>
           </div>
         </section>
 
-        <!-- Tab 2: King & Citadel -->
-        <section id="tab-citadel" class="tab-pane">
+        <!-- TAB 3: ARMORY & MILITARY DRAFTING (STRONGHOLD SYSTEM) -->
+        <section id="tab-armory" class="tab-pane">
           <div class="panel-section-title">
-            <h3>CITADEL THRONE ROOM // REGICIDE PROTOCOL</h3>
-            <span class="section-badge badge-warning">Target of Regicide</span>
+            <h3>THE CASTLE ARMORY</h3>
+            <span class="section-badge">Forged Equipment</span>
           </div>
 
-          <!-- King Status Card -->
+          <!-- Armory Stock Display -->
+          <div class="armory-inventory-grid">
+            <div class="armory-slot">
+              <img src="/models2d/bow.svg" class="armory-icon" alt="Bow">
+              <span>Bows: <strong id="stock-bows">12</strong></span>
+            </div>
+            <div class="armory-slot">
+              <img src="/models2d/crossbow.svg" class="armory-icon" alt="Crossbow">
+              <span>Crossbows: <strong id="stock-crossbows">6</strong></span>
+            </div>
+            <div class="armory-slot">
+              <img src="/models2d/spear.svg" class="armory-icon" alt="Spear">
+              <span>Spears: <strong id="stock-spears">15</strong></span>
+            </div>
+            <div class="armory-slot">
+              <img src="/models2d/pike.svg" class="armory-icon" alt="Pike">
+              <span>Pikes: <strong id="stock-pikes">8</strong></span>
+            </div>
+            <div class="armory-slot">
+              <img src="/models2d/mace.svg" class="armory-icon" alt="Mace">
+              <span>Maces: <strong id="stock-maces">5</strong></span>
+            </div>
+            <div class="armory-slot">
+              <img src="/models2d/sword.svg" class="armory-icon" alt="Sword">
+              <span>Swords: <strong id="stock-swords">7</strong></span>
+            </div>
+            <div class="armory-slot">
+              <img src="/models2d/leather_armor.svg" class="armory-icon" alt="Leather">
+              <span>Leather: <strong id="stock-leather">11</strong></span>
+            </div>
+            <div class="armory-slot">
+              <img src="/models2d/metal_plate_armor.svg" class="armory-icon" alt="Plate">
+              <span>Plate: <strong id="stock-plate">9</strong></span>
+            </div>
+          </div>
+
+          <div class="panel-section-title">
+            <h3>BARRACKS MILITARY DRAFTING</h3>
+            <span class="section-badge">Peasant + Weapon + Gold</span>
+          </div>
+
+          <!-- Unit Recruitment Cards -->
+          <div class="recruitment-list">
+            <!-- Spearman -->
+            <div class="recruit-card">
+              <img src="/models2d/spearman.svg" class="recruit-avatar" alt="Spearman">
+              <div class="recruit-info">
+                <strong>Spearman (Militia)</strong>
+                <small>Requires: Peasant + 1 Spear + 10g</small>
+                <div class="recruit-stats">Roster: <strong id="roster-spearmen">14</strong> Active</div>
+              </div>
+              <button class="btn-draft" id="btn-draft-spearman">Draft (10g)</button>
+            </div>
+
+            <!-- Archer -->
+            <div class="recruit-card">
+              <img src="/models2d/archer.svg" class="recruit-avatar" alt="Archer">
+              <div class="recruit-info">
+                <strong>Archer (Longbow)</strong>
+                <small>Requires: Peasant + 1 Bow + 20g</small>
+                <div class="recruit-stats">Roster: <strong id="roster-archers">18</strong> Active</div>
+              </div>
+              <button class="btn-draft" id="btn-draft-archer">Draft (20g)</button>
+            </div>
+
+            <!-- Crossbowman -->
+            <div class="recruit-card">
+              <img src="/models2d/crossbowman.svg" class="recruit-avatar" alt="Crossbowman">
+              <div class="recruit-info">
+                <strong>Crossbowman (Heavy)</strong>
+                <small>Requires: Peasant + Crossbow + Leather + 35g</small>
+                <div class="recruit-stats">Roster: <strong id="roster-crossbowmen">8</strong> Active</div>
+              </div>
+              <button class="btn-draft" id="btn-draft-crossbowman">Draft (35g)</button>
+            </div>
+
+            <!-- Maceman -->
+            <div class="recruit-card">
+              <img src="/models2d/maceman.svg" class="recruit-avatar" alt="Maceman">
+              <div class="recruit-info">
+                <strong>Maceman (Shock)</strong>
+                <small>Requires: Peasant + Mace + Leather + 40g</small>
+                <div class="recruit-stats">Roster: <strong id="roster-macemen">6</strong> Active</div>
+              </div>
+              <button class="btn-draft" id="btn-draft-maceman">Draft (40g)</button>
+            </div>
+
+            <!-- Swordsman -->
+            <div class="recruit-card">
+              <img src="/models2d/swordsman.svg" class="recruit-avatar" alt="Swordsman">
+              <div class="recruit-info">
+                <strong>Swordsman (Plate)</strong>
+                <small>Requires: Peasant + Sword + Plate + 60g</small>
+                <div class="recruit-stats">Roster: <strong id="roster-swordsmen">4</strong> Active</div>
+              </div>
+              <button class="btn-draft" id="btn-draft-swordsman">Draft (60g)</button>
+            </div>
+
+            <!-- Knight -->
+            <div class="recruit-card">
+              <img src="/models2d/knight.svg" class="recruit-avatar" alt="Knight">
+              <div class="recruit-info">
+                <strong>Knight (Mounted Heavy)</strong>
+                <small>Requires: Peasant + Sword + Plate + Warhorse + 120g</small>
+                <div class="recruit-stats">Roster: <strong id="roster-knights">2</strong> Active</div>
+              </div>
+              <button class="btn-draft gold" id="btn-draft-knight">Draft Knight (120g)</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: SIEGE, FORTIFICATIONS & KING'S CITADEL -->
+        <section id="tab-citadel" class="tab-pane">
+          <!-- The King Card -->
           <article class="asset-card king-card">
             <div class="king-header-row">
               <div class="king-profile">
-                <span class="crown-badge">👑</span>
+                <img src="/models2d/king.svg" class="king-avatar-svg" alt="King">
                 <div>
                   <h4>Chieftain Arsalan of Parrot Green</h4>
-                  <small>Life Percentage Rule [Section 5.2]</small>
+                  <small>Regicide Rule: If King falls, realm is vanquished!</small>
                 </div>
               </div>
               <span class="king-status-tag safe" id="king-status-indicator">SECURE</span>
             </div>
 
-            <!-- King's 100% Life Bar -->
             <div class="health-bar-container">
               <div class="health-bar-labels">
-                <span>KING'S VITAL LIFE FORCE</span>
+                <span>LORD'S VITAL LIFE FORCE</span>
                 <strong class="font-mono text-cyan" id="king-health-num">100%</strong>
               </div>
               <div class="health-track">
@@ -288,15 +568,59 @@
               </div>
             </div>
 
-            <p class="king-warning-text">
-              ⚠️ If the King's Life Bar hits 0%, the crown shatters and the entire Parrot Green empire immediately vanishes from the world map.
-            </p>
-
             <div class="king-action-buttons">
-              <button class="btn-rescue" id="btn-test-attack">Simulate Attack (-20% HP)</button>
+              <button class="btn-rescue" id="btn-test-attack">Simulate Siege Assault (-20% HP)</button>
               <button class="btn-hospital" id="btn-hospital-boost">🏥 Hospital Rescue (+35% Boost)</button>
             </div>
           </article>
+
+          <!-- Active Castle Defenses -->
+          <div class="panel-section-title">
+            <h3>ACTIVE CASTLE DEFENSES</h3>
+            <span class="section-badge">Pitch & Boiling Oil</span>
+          </div>
+
+          <div class="action-grid">
+            <div class="action-tile danger" id="tile-pitch-ditch">
+              <img src="/models2d/pitch_ditch.svg" class="tile-icon-svg" alt="Pitch Ditch">
+              <strong>Ignite Pitch Ditch</strong>
+              <small>Flaming Arrow Wall</small>
+              <button class="btn-tile danger" id="btn-ignite-pitch">FIRE PITCH! 🔥</button>
+            </div>
+            <div class="action-tile warning" id="tile-boiling-oil">
+              <img src="/models2d/boiling_oil.svg" class="tile-icon-svg" alt="Boiling Oil">
+              <strong>Pour Boiling Oil</strong>
+              <small>Melt Gate Attackers</small>
+              <button class="btn-tile warning" id="btn-pour-oil">POUR OIL! 🛢️</button>
+            </div>
+          </div>
+
+          <!-- Siege Machinery Arsenal -->
+          <div class="panel-section-title">
+            <h3>SIEGE ENGINE WORKSHOP</h3>
+            <span class="section-badge">Engineers Guild</span>
+          </div>
+
+          <div class="action-grid">
+            <div class="action-tile" id="tile-ram">
+              <img src="/models2d/battering_ram.svg" class="tile-icon-svg" alt="Ram">
+              <strong>Battering Ram</strong>
+              <small>Crushes Gates</small>
+              <button class="btn-tile" id="btn-build-ram">Build (150g)</button>
+            </div>
+            <div class="action-tile" id="tile-catapult">
+              <img src="/models2d/catapult.svg" class="tile-icon-svg" alt="Catapult">
+              <strong>Catapult</strong>
+              <small>Wall Breacher</small>
+              <button class="btn-tile" id="btn-build-catapult">Build (200g)</button>
+            </div>
+            <div class="action-tile" id="tile-trebuchet">
+              <img src="/models2d/trebuchet.svg" class="tile-icon-svg" alt="Trebuchet">
+              <strong>Trebuchet</strong>
+              <small>Disease Cows / Stones</small>
+              <button class="btn-tile" id="btn-build-trebuchet">Build (350g)</button>
+            </div>
+          </div>
 
           <!-- Generational Human Lifecycle -->
           <div class="panel-section-title">
@@ -306,7 +630,7 @@
 
           <div class="lifecycle-timeline">
             <div class="lifecycle-step active">
-              <div class="step-bullet">1</div>
+              <img src="/models2d/child.svg" class="timeline-step-icon" alt="Child">
               <div class="step-body">
                 <strong>Stage 1: Child (0–10 Mins)</strong>
                 <p>Consumes food reserves. Zero manual labor output.</p>
@@ -314,7 +638,7 @@
               </div>
             </div>
             <div class="lifecycle-step active">
-              <div class="step-bullet">2</div>
+              <img src="/models2d/young_man.svg" class="timeline-step-icon" alt="Young Man">
               <div class="step-body">
                 <strong>Stage 2: Young Man (10–25 Mins)</strong>
                 <p>Mines, Dam workers, Spies, and frontline Talwar warriors.</p>
@@ -322,7 +646,7 @@
               </div>
             </div>
             <div class="lifecycle-step">
-              <div class="step-bullet">3</div>
+              <img src="/models2d/old_man.svg" class="timeline-step-icon" alt="Old Man">
               <div class="step-body">
                 <strong>Stage 3: Old Man (25–40 Mins)</strong>
                 <p>Bey Council elder. Boosts loyalty and unlocks blueprints.</p>
@@ -332,7 +656,7 @@
           </div>
         </section>
 
-        <!-- Tab 3: Geopolitics & Dynamic Market Inflation -->
+        <!-- TAB 5: RIVAL LORDS & DYNAMIC MARKET INFLATION -->
         <section id="tab-geopolitics" class="tab-pane">
           <div class="panel-section-title">
             <h3>DYNAMIC MARKET INFLATION ENGINE</h3>
@@ -342,85 +666,69 @@
           <!-- Market Ticker Grid -->
           <div class="market-ticker-list">
             <div class="ticker-row">
-              <span class="item-name">🪵 Raw Timber Logs</span>
+              <span class="item-name"><img src="/models2d/wood.svg" class="ticker-mini-icon"> Raw Timber</span>
               <span class="item-base font-mono">15 🪙</span>
               <span class="item-mult font-mono text-green" id="ticker-timber-mult">+140%</span>
               <button class="btn-ticker-sell" id="btn-sell-timber">Dump 20 Logs</button>
             </div>
             <div class="ticker-row">
-              <span class="item-name">🌾 Organic Grain Food</span>
+              <span class="item-name"><img src="/models2d/bread.svg" class="ticker-mini-icon"> Baked Bread</span>
               <span class="item-base font-mono">10 🪙</span>
               <span class="item-mult font-mono text-green" id="ticker-food-mult">+220%</span>
-              <button class="btn-ticker-sell" id="btn-sell-food">Dump 50 Food</button>
+              <button class="btn-ticker-sell" id="btn-sell-food">Dump 50 Bread</button>
             </div>
             <div class="ticker-row">
-              <span class="item-name">🛢️ Black Crude Oil</span>
+              <span class="item-name"><img src="/models2d/stone.svg" class="ticker-mini-icon"> Cut Stone</span>
+              <span class="item-base font-mono">25 🪙</span>
+              <span class="item-mult font-mono text-green" id="ticker-stone-mult">+160%</span>
+              <button class="btn-ticker-sell" id="btn-sell-stone">Dump 20 Stone</button>
+            </div>
+            <div class="ticker-row">
+              <span class="item-name"><img src="/models2d/pitch.svg" class="ticker-mini-icon"> Black Pitch</span>
               <span class="item-base font-mono">60 🪙</span>
               <span class="item-mult font-mono text-red" id="ticker-oil-mult">+480% (Sump Crisis)</span>
-              <button class="btn-ticker-sell disabled">No Reserve</button>
-            </div>
-            <div class="ticker-row">
-              <span class="item-name">💧 Fresh Dam Water</span>
-              <span class="item-base font-mono">35 🪙</span>
-              <span class="item-mult font-mono text-green" id="ticker-water-mult">+180%</span>
-              <button class="btn-ticker-sell" id="btn-sell-water">Export Valve</button>
+              <button class="btn-ticker-sell" id="btn-sell-pitch">Dump 10 Pitch</button>
             </div>
           </div>
 
-          <!-- 6 Rival Factions Status -->
+          <!-- The 4 Iconic AI Rival Lords -->
           <div class="panel-section-title">
-            <h3>REGIONAL FACTION POWER MATRIX</h3>
-            <span class="section-badge">6 Geopolitical Powers</span>
+            <h3>THE FOUR RIVAL AI LORDS</h3>
+            <span class="section-badge">Stronghold Personalities</span>
           </div>
 
           <ul class="faction-list">
-            <li class="faction-item parrot">
-              <div class="faction-avatar-dot parrot-green"></div>
+            <li class="faction-item rat">
+              <img src="/models2d/lord_rat.svg" class="lord-avatar" alt="The Rat">
               <div class="faction-meta">
-                <strong>Your Clan (Parrot Green)</strong>
-                <small>Mobility, Exponential Multipliers, Bloodline Succession</small>
+                <strong>Duc de Puce (The Rat)</strong>
+                <small>Flimsy wooden palisades, swarms of spearmen. Cowardly.</small>
               </div>
-              <span class="faction-rel text-cyan">ALLIED</span>
+              <span class="faction-rel text-red">WEAK FOE</span>
             </li>
-            <li class="faction-item blue">
-              <div class="faction-avatar-dot blue-flag"></div>
+            <li class="faction-item snake">
+              <img src="/models2d/lord_snake.svg" class="lord-avatar" alt="The Snake">
               <div class="faction-meta">
-                <strong>The Northern Empire (Blue)</strong>
-                <small>Stone Fortresses, Imperial Knights Turtle Shield Wall</small>
+                <strong>Duc Beauregard (The Snake)</strong>
+                <small>Water moats, pitch traps, crossbow crossfires, night raids.</small>
               </div>
-              <span class="faction-rel text-gold">NEUTRAL</span>
+              <span class="faction-rel text-gold">TREACHEROUS</span>
             </li>
-            <li class="faction-item gray">
-              <div class="faction-avatar-dot gray-flag"></div>
+            <li class="faction-item pig">
+              <img src="/models2d/lord_pig.svg" class="lord-avatar" alt="The Pig">
               <div class="faction-meta">
-                <strong>The Steppe Horde (Gray)</strong>
-                <small>Hyper-Aggressive Nomads, Swarm Cavalry Charges</small>
+                <strong>Duc Truffe (The Pig)</strong>
+                <small>Heavy iron mining, aggressive waves of Macemen & Battering Rams.</small>
               </div>
-              <span class="faction-rel text-red">HOSTILE</span>
+              <span class="faction-rel text-red">AGGRESSIVE</span>
             </li>
-            <li class="faction-item maroon">
-              <div class="faction-avatar-dot maroon-flag"></div>
+            <li class="faction-item wolf">
+              <img src="/models2d/lord_wolf.svg" class="lord-avatar" alt="The Wolf">
               <div class="faction-meta">
-                <strong>The Fallen Sultanate (Maroon)</strong>
-                <small>River Delta Valve, Stationary Heavy Catapults</small>
+                <strong>Duc Volpe (The Wolf)</strong>
+                <small>Impregnable stone citadels, catapult batteries, elite Knights.</small>
               </div>
-              <span class="faction-rel text-gold">TRIBUTE</span>
-            </li>
-            <li class="faction-item red">
-              <div class="faction-avatar-dot red-flag"></div>
-              <div class="faction-meta">
-                <strong>The Blood Dynasty (Red)</strong>
-                <small>Stealth Night Raids, Poison-Tipped Sabotage</small>
-              </div>
-              <span class="faction-rel text-red">DANGER</span>
-            </li>
-            <li class="faction-item black">
-              <div class="faction-avatar-dot black-flag"></div>
-              <div class="faction-meta">
-                <strong>The Umbral Guild (Black)</strong>
-                <small>Economic Blockades, Artificial Starvation Cycles</small>
-              </div>
-              <span class="faction-rel text-muted">SHADOW</span>
+              <span class="faction-rel text-red">SUPREME LORD</span>
             </li>
           </ul>
         </section>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Tankard body -->
+  <path d="M34 38 L66 38 L62 85 L38 85 Z" fill="#795548" stroke="#4e342e" stroke-width="2"/>
+  <!-- Handle -->
+  <path d="M64 45 Q78 58 63 75" fill="none" stroke="#5d4037" stroke-width="5" stroke-linecap="round"/>
+  <!-- Foaming head of ale -->
+  <ellipse cx="50" cy="38" rx="18" ry="7" fill="#fefcbf"/>
+  <circle cx="40" cy="34" r="5" fill="#ffffff"/>
+  <circle cx="50" cy="32" r="6" fill="#ffffff"/>
+  <circle cx="60" cy="34" r="5" fill="#ffffff"/>
+  <path d="M44 38 Q46 48 44 50" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+</svg>

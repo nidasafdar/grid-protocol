@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fbd38d"/><stop offset="100%" stop-color="#ed8936"/></linearGradient>
+    <linearGradient id="tunic" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9c4221"/><stop offset="100%" stop-color="#652b19"/></linearGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d69e2e"/><stop offset="100%" stop-color="#975a16"/></linearGradient>
+  </defs>
+  <ellipse cx="50" cy="94" rx="20" ry="5" fill="#000" opacity="0.3"/>
+  <!-- Legs / Pants -->
+  <rect x="42" y="70" width="6" height="20" rx="3" fill="#4a5568"/>
+  <rect x="52" y="70" width="6" height="20" rx="3" fill="#4a5568"/>
+  <rect x="40" y="87" width="9" height="6" rx="2" fill="#2d3748"/>
+  <rect x="51" y="87" width="9" height="6" rx="2" fill="#2d3748"/>
+  <!-- Tunic body -->
+  <path d="M38 45 L62 45 L67 72 L33 72 Z" fill="url(#tunic)"/>
+  <rect x="36" y="58" width="28" height="4" fill="#2d3748"/>
+  <rect x="48" y="57" width="4" height="6" fill="#ecc94b"/>
+  <!-- Arms -->
+  <rect x="30" y="47" width="8" height="18" rx="4" transform="rotate(15 34 56)" fill="url(#tunic)"/>
+  <circle cx="28" cy="66" r="3.5" fill="url(#skin)"/>
+  <rect x="62" y="47" width="8" height="18" rx="4" transform="rotate(-15 66 56)" fill="url(#tunic)"/>
+  <circle cx="72" cy="66" r="3.5" fill="url(#skin)"/>
+  <!-- Head & Hair -->
+  <circle cx="50" cy="30" r="14" fill="url(#skin)"/>
+  <path d="M36 28 Q50 12 64 28 Q64 16 50 14 Q36 16 36 28 Z" fill="url(#hair)"/>
+  <!-- Face -->
+  <circle cx="45" cy="29" r="1.5" fill="#2d3748"/>
+  <circle cx="55" cy="29" r="1.5" fill="#2d3748"/>
+  <path d="M47 36 Q50 39 53 36" stroke="#c53030" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>

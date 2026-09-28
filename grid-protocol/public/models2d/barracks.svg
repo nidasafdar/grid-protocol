@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="94" rx="42" ry="5" fill="#000" opacity="0.3"/>
+  <rect x="20" y="46" width="60" height="44" fill="#a0aec0" stroke="#4a5568" stroke-width="2"/>
+  <!-- Battlements roof -->
+  <rect x="18" y="38" width="9" height="10" fill="#718096"/>
+  <rect x="34" y="38" width="9" height="10" fill="#718096"/>
+  <rect x="57" y="38" width="9" height="10" fill="#718096"/>
+  <rect x="73" y="38" width="9" height="10" fill="#718096"/>
+  <!-- Target Dummy in front -->
+  <rect x="28" y="70" width="3" height="18" fill="#5d4037"/>
+  <circle cx="29.5" cy="65" r="5" fill="#e53e3e"/>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="gold_crown" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f6e05e"/><stop offset="100%" stop-color="#d69e2e"/></linearGradient>
+    <linearGradient id="mantle" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9b2c2c"/><stop offset="100%" stop-color="#63171b"/></linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e2e8f0"/><stop offset="100%" stop-color="#718096"/></linearGradient>
+  </defs>
+  <ellipse cx="50" cy="96" rx="26" ry="5" fill="#000" opacity="0.3"/>
+  <!-- Royal Mantle Cape -->
+  <path d="M22 34 L78 34 L82 92 L18 92 Z" fill="url(#mantle)"/>
+  <!-- Broadsword planted in ground -->
+  <line x1="50" y1="46" x2="50" y2="92" stroke="#a0aec0" stroke-width="4"/>
+  <line x1="42" y1="52" x2="58" y2="52" stroke="#d69e2e" stroke-width="3"/>
+  <circle cx="50" cy="46" r="3.5" fill="#d69e2e"/>
+  <!-- Steel Breastplate Body -->
+  <path d="M34 32 L66 32 L62 70 L38 70 Z" fill="url(#steel)"/>
+  <!-- Pauldrons / Shoulders -->
+  <ellipse cx="32" cy="35" rx="7" ry="6" fill="#a0aec0"/>
+  <ellipse cx="68" cy="35" rx="7" ry="6" fill="#a0aec0"/>
+  <!-- Head & Crown -->
+  <circle cx="50" cy="20" r="11" fill="#fbd38d"/>
+  <!-- Golden Crown -->
+  <path d="M40 14 L40 7 L44 11 L50 6 L56 11 L60 7 L60 14 Z" fill="url(#gold_crown)"/>
+  <!-- Face details -->
+  <circle cx="47" cy="20" r="1.5" fill="#1a202c"/>
+  <circle cx="53" cy="20" r="1.5" fill="#1a202c"/>
+  <path d="M46 25 Q50 28 54 25" stroke="#744210" stroke-width="1.5" fill="none"/>
+</svg>

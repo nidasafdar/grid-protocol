@@ -1,175 +1,368 @@
-# 👑 MASTER PRODUCTION SYSTEM SPECIFICATION: GRID PROTOCOL
-Enterprise Game Design Document & Engineering Blueprint  
-Core Graphics Pipeline: PixiJS v8 Native Low-Level WebGPU Engine [2.4]  
-Architecture: Decoupled HTML5 UI Layer + Split-Screen Hardware Matrix  
-Match Scale Scope: 11,000 km² Living Eco-System [2.4]  
+# 🏰 MASTER PRODUCTION SYSTEM SPECIFICATION: GRID PROTOCOL
+## *Stronghold 1 Edition: The Definitive Castle-Builder & Siege RTS Architecture*
 
-------------------------------
+**Document Version:** 3.0  
+**Core Reference Game:** *Stronghold 1* (Firefly Studios, 2001)  
+**Graphics Engine:** Native WebGPU / PixiJS v8 Hardware Accelerated Matrix  
+**UI Layer:** Split-Screen Medieval Ledger (70% Castle Simulation / 30% Castle Scribe & Treasury Management)  
 
-## SECTION 1: ARCHITECTURAL ENGINE SPECIFICATIONS
+---
+
+## 📜 1. EXECUTIVE SUMMARY & DESIGN PILLARS
+
+**Grid Protocol: Stronghold Edition** faithfully recreates and modernizes the complete mechanical ecosystem of the legendary medieval castle simulation **Stronghold 1 (2001)**. Rather than relying on abstract RTS mechanics (where units spawn magically from barracks using gold), Grid Protocol implements the complete **simulation physics, authentic supply chains, castle life popularity, and siege warfare** that defined Stronghold 1:
+
+1. **"The People Love You, My Lord" (The Popularity Engine):** Castle growth is governed 100% by citizen sentiment. If popularity stays above 50, peasants arrive at your campfire; if it drops below 50, peasants abandon you and your workshops halt.
+2. **Physical Goods & Visible Transport:** Every log, stone block, bushel of wheat, sack of flour, loaf of bread, sword, and flagon of ale exists physically in the world and must be hauled by workers between production buildings, the Stockpile, the Granary, and the Armory.
+3. **True Weapon Smithing & Peasant Drafting:** Armies are not bought. Peasants waiting at your campfire are handed weapons and armor forged in local workshops (Bowyers, Blacksmiths, Poleturners, Armorers, Tanners) and assembled at the Barracks.
+4. **Architectural Castle Construction & Dynamic Defense:** Freeform curtain walls, crenelations, fortified gatehouses with drawbridges and portcullises, diggable moats, multi-tiered towers with elevation bonuses, pitch ditches ignited into fiery walls, and boiling oil cauldrons.
+5. **Full Siege Machinery & Assault Tactics:** Trebuchets flinging diseased cattle and stone boulders, battering rams shattering gates, siege towers bridging walls, laddermen scaling battlements, and subterranean tunnelers collapsing stone towers from below.
+6. **The Lord of the Keep (Regicide):** Your Lord is the beating heart of your fortress. An immovable combat powerhouse residing on the Keep roof; if the Lord falls in battle, the castle falls instantly.
+7. **The Iconic AI Lords (Rat, Snake, Pig, Wolf):** Dynamic rival lords, each featuring distinct castle architecture, economic priorities, tactical siege behaviors, and voice-acted psychological taunts.
+
+---
+
+## 👑 2. THE POPULARITY & CASTLE SENTIMENT ENGINE (0–100)
 
 ```
 ========================================================================================
-                                 [ SYSTEM ARCHITECTURE ]
+                          [ THE POPULARITY CALCULATOR (MOMENTUM) ]
 ========================================================================================
-[ LEFT PANING SCREEN (70%): WEBGPU BLAS FIRING ]   [ RIGHT CONTROL SIDEBAR (30%): HTML5 DOM ]
- - Hardware Instanced Sprites (Goats/Knights)       - Microtransaction Layout Shop Panel
- - Multi-Layer Parallax Cloud Canvas Shading        - Real-Time Supply-and-Demand Tickers
- - Algorithmic Vector Boundary Clamping             - Direct Drag and Drop Interactivity API
+ [ FOOD RATIONS ]    [ DIET DIVERSITY ]    [ TAX / BRIBE ]    [ ALE SUPPLY ]    [ RELIGION ]
+ (-8 to +8 pts)      (+1 to +4 pts)        (-24 to +16 pts)   (+1 to +8 pts)    (+1 to +8 pts)
+        │                   │                     │                  │                 │
+        └───────────────────┼─────────────────────┴──────────────────┼─────────────────┘
+                            ▼                                        ▼
+             ┌──────────────────────────────────────────────────────────────┐
+             │            GLOBAL CASTLE POPULARITY SCORE (0 - 100)          │
+             │  • Score > 50: Campfire fills with eager peasant recruits   │
+             │  • Score = 50: Static balance (no arrivals, no departures)   │
+             │  • Score < 50: Peasants pack belongings and abandon castle  │
+             └──────────────────────────────────────────────────────────────┘
+```
+
+### 2.1 The Campfire & Peasant Spawning Loop
+* In front of the Central Keep burns the **Peasant Campfire**.
+* Unemployed peasants sit around the campfire chatting and waiting for orders.
+* When a building is placed (e.g., Woodcutter's Hut or Fletcher), a peasant automatically gets up, walks to the building, transforms into the designated profession with dedicated tools, and begins work.
+* When a military recruit is ordered at the Barracks, an idle peasant walks into the armory, equips weapons/armor, and reports for duty.
+* **If Popularity > 50:** A new peasant spawns at the campfire every few seconds (speed scales with popularity level: +1 at 55 pop, +4 at 90+ pop).
+* **If Popularity < 50:** Peasants stand up, announce dissatisfaction, and walk out of the map borders. Factories and guard posts stand abandoned.
+
+### 2.2 Food Distribution & The Granary
+Food is deposited exclusively into the **Granary**. The Lord sets rationing rules via the Scribe's Ledger:
+* **No Rations:** -8 Popularity (Peasants starve; high desertion rate).
+* **Half Rations:** -4 Popularity (Peasants consume 0.5 food/month).
+* **Normal Rations:** +0 Popularity (Peasants consume 1.0 food/month).
+* **Double Rations:** +4 Popularity (Peasants consume 2.0 food/month).
+* **Extra Rations:** +8 Popularity (Peasants consume 3.0 food/month).
+
+### 2.3 Food Variety (Diet Diversity Bonus)
+Stronghold 1 rewards diverse agriculture. Feeding your people multiple food groups yields compounding popularity:
+* **1 Food Type:** +1 Popularity
+* **2 Food Types:** +2 Popularity
+* **3 Food Types:** +3 Popularity
+* **4 Food Types:** +4 Popularity *(Apples + Meat + Cheese + Bread)*
+
+### 2.4 The Royal Treasury: Taxation & Bribes
+Managed by the Scribe in the Keep:
+* **Extortionate Taxes:** -24 Popularity (+3.0 gold per peasant per month).
+* **High Taxes:** -16 Popularity (+2.0 gold/peasant).
+* **Moderate Taxes:** -8 Popularity (+1.0 gold/peasant).
+* **Low Taxes:** -4 Popularity (+0.6 gold/peasant).
+* **No Taxes:** +0 Popularity (*"No taxes is good taxes, Sire!"*).
+* **Small Bribes:** +4 Popularity (Costs 0.6 gold/peasant).
+* **Generous Bribes:** +8 Popularity (Costs 1.2 gold/peasant).
+* **Extravagant Bribes:** +16 Popularity (Costs 2.4 gold/peasant).
+
+### 2.5 Ale Coverage & Inns
+* **Hops Farm ➔ Brewery ➔ Inn / Tavern**.
+* The Innkeeper serves foaming tankards of ale to workers.
+* Ale coverage is calculated as the ratio of active Inns to total population.
+* Provides **+1 to +8 Popularity** depending on tavern distribution and ale reserves.
+
+### 2.6 Religion, Churches & Priestly Blessings
+* **Chapel ➔ Church ➔ Cathedral**.
+* Priests emerge from holy buildings and roam through castle pathways, sprinkling holy water and blessing workers.
+* Blessed workers gain glowing markers and religious fulfillment.
+* Religion metric provides **+1 to +8 Popularity** based on percentage of blessed population.
+
+### 2.7 Fear Factor: Good Things vs. Bad Things
+A core mechanic unique to Stronghold 1:
+* **Bad Things (Cruelty / Terror):**
+  * Buildings: *Gallows, Stocks, Cesspools, Dunking Stool, Chopping Block, Iron Maiden, Gibbet, Torture Chamber, Burning Piles*.
+  * **Effect:** Lowers peasant happiness and military combat effectiveness (up to -25%), but **increases peasant work speed and industrial production by up to +25%** due to sheer terror.
+* **Good Things (Pageantry / Benevolence):**
+  * Buildings: *Maypoles, Dancing Bear Arenas, Flower Gardens, Stone Fountains, Statues, Shrines, Paved Plazas*.
+  * **Effect:** Increases castle popularity (up to +5) and **boosts military unit damage and defense by up to +25%**, but **slows down industrial workers** who pause work to dance around maypoles, feed bears, or relax in gardens.
+
+---
+
+## 🪵 3. THE COMPLETE PHYSICAL PRODUCTION & SUPPLY CHAINS
+
+No resources are teleported into an abstract bank account. Every material follows an authentic multi-stage chain:
+
+```
+[ HARVEST ]                  [ PROCESSING ]                  [ LOGISTICS / END USE ]
+-----------------------------------------------------------------------------------------
+Woodcutter's Hut             ➔ Logs on shoulder              ➔ Stockpile (Buildings & Bows)
+Stone Quarry                 ➔ Cut stone blocks ➔ Ox Tether  ➔ Stockpile (Castle Walls/Towers)
+Iron Mine                    ➔ Raw iron chunks               ➔ Stockpile (Armor & Weapons)
+Pitch Rig                    ➔ Pitch buckets from marsh      ➔ Stockpile (Pitch Ditches & Cauldrons)
+
+Wheat Farm                   ➔ Wheat sheaves                 ➔ Mill (Flour Sacks) ➔ Bakery (Bread) ➔ Granary
+Dairy Farm                   ➔ Cheese (Granary)  +  Cow Hides (Tanner's Workshop)
+Apple Orchard                ➔ Baskets of Apples             ➔ Granary
+Hunter's Post                ➔ Dressed Venison Meat          ➔ Granary
+
+Hops Farm                    ➔ Hops barrels                  ➔ Brewery (Ale) ➔ Inn (Popularity)
+```
+
+### 3.1 Primary Industrial Chains
+1. **Lumber Production:** Woodcutters fell trees, trim trunks, saw logs, and carry heavy timber logs on their shoulders straight to the Stockpile.
+2. **Stone Quarrying & Oxen Transportation:**
+   * Quarries must be built on stone cliff formations.
+   * Quarrymen carve large stone blocks.
+   * **Ox Tethers & Oxen Handlers:** Oxen are hitched to carry stone blocks from quarries to the Stockpile. If enemy raiders kill the ox or handler, stone delivery is paralyzed!
+3. **Iron Mining:** Iron mines built over red iron deposits dig deep into the bedrock. Heavy iron ingots are carried to the Stockpile for weapon forging and armor plating.
+4. **Pitch Marsh Extraction:** Pitch rigs extract bubbling black tar from swamp basins, filling wooden pitch buckets used for fire defense.
+
+### 3.2 Agricultural Food Production Chains
+1. **Bread Cycle (High-Volume Staple Food):**
+   * **Wheat Farm:** Farmers sow and harvest golden wheat sheaves, delivering them to the Stockpile.
+   * **The Mill:** The Miller grinds wheat into white flour sacks (1 wheat = 3-4 flour).
+   * **The Bakery:** Bakers bake flour with water into fresh loaves of bread, carrying them directly into the Granary (1 flour = 8 loaves of bread). Highly efficient for feeding hundreds of peasants!
+2. **Dairy Farm (Double-Yield Commodity):**
+   * Cows graze in pastures. Dairy farmers milk cows and age cheese, delivering wheels of cheese to the Granary.
+   * When cows mature, the farmer skins them for **Leather Hides**, delivering them to the Tanner's Workshop for medium armor.
+3. **Apple Orchard:** Farmers cultivate apple trees and pick ripe apples, delivering fruit directly to the Granary. Low setup cost, consistent food yield.
+4. **Hunter's Post:** Huntsmen armed with bows roam the woods, hunt wild deer, skin the carcasses, and haul fresh venison meat to the Granary.
+
+### 3.3 The Trading Post & Dynamic Market
+* The **Marketplace** building allows immediate buying and selling of all commodities (Wood, Stone, Iron, Pitch, Wheat, Flour, Bread, Apples, Cheese, Meat, Hops, Ale, Weapons).
+* Dynamic price fluctuations: Flood the market with cheese and the sell price drops; suffer a severe wood shortage and the import cost multiplies exponentially.
+
+---
+
+## ⚔️ 4. ARMORY, WEAPONSMITHING & BARRACKS RECRUITMENT
+
+In Grid Protocol (just as in Stronghold 1), **soldiers cannot be purchased directly with gold**. The Lord must maintain an active **Armory** stocked with forged weapons and armor, and must have free peasants waiting at the Campfire.
+
+```
+========================================================================================
+                          [ WEAPON FORGING & RECRUITMENT MATRIX ]
+========================================================================================
+ WORKSHOP                INPUT RES      OUTPUT EQUIPMENT       DRAFT RECRUIT
+----------------------------------------------------------------------------------------
+ Bowyer's Workshop       Wood (Logs) ➔  Bows (Hunting/Short) ➔ Archer (Peasant + Bow)
+                                     ➔  Crossbows            ➔ Crossbowman (+ Leather)
+ Blacksmith's Workshop   Iron Ore    ➔  Swords (Broadsword)  ➔ Swordsman (+ Metal Armor)
+                                     ➔  Maces (Spiked Mace)  ➔ Maceman (+ Leather Armor)
+ Poleturner's Workshop   Wood (Logs) ➔  Spears               ➔ Spearman (Peasant + Spear)
+                                     ➔  Pikes (Long Pike)    ➔ Pikeman (+ Metal Armor)
+ Tanner's Workshop       Cow Hides   ➔  Leather Armor        ➔ Crossbowman & Maceman
+ Armorer's Workshop      Iron Ore    ➔  Heavy Metal Armor    ➔ Pikeman, Swordsman, Knight
+ Stable                  Crops/Gold  ➔  Warhorse             ➔ Knight (+ Sword + Armor + Horse)
+ Engineers Guild         Gold        ➔  Engineer             ➔ Siege Engines & Oil Crews
+ Tunnelers Guild         Gold        ➔  Tunneler             ➔ Subterranean Undermining
 ========================================================================================
 ```
 
-### 1.1 WebGPU Hardware Acceleration Pipeline
-To ensure the absolute stability of a simulation tracking thousands of rendering assets (livestock, soldiers, buildings, particle systems) across an 11,000 square kilometre virtual board, the engine completely bypasses old, high-overhead canvas rendering contexts [2.4]. By initializing the modern WebGPU graphics API backend, the game engine communicates directly with the user's graphics hardware [2.4].
+### 4.1 Unit Profiles & Combat Balance
+* **Spearman:** Cheap, swift, lightly armored. Excellent for running up to enemy ladders and pushing them off walls, or digging down enemy moats. Vulnerable to archers.
+* **Archer:** Longest range, rapid firing rate, weak in melee. Can fire normal arrows or light pitch ditches using braziers atop stone battlements.
+* **Crossbowman:** Heavy armor-piercing damage, slow reload, high defense (leather armor). Devastating against enemy Knights and Swordsmen; lethal defenders atop towers.
+* **Maceman:** Fast-sprinting shock infantry armed with spiked maces. Easily overtakes archers, leaps onto battlements from siege towers, and smashes unarmored units instantly.
+* **Pikeman:** Massive health pool, heavy metal armor, slow movement. The ultimate defensive unit against cavalry charges; takes hundreds of arrows to fell. Can dig down moats under heavy arrow fire.
+* **Swordsman:** Extremely heavily armored, unstoppable forward advance, crushing greatsword strikes. The backbone of castle assaults and throne room defense.
+* **Knight:** Mounted on warhorses with lances and heavy armor. Blistering battlefield speed, crushing shock-charge impact, capable of flanking catapults and mowing down unfortified worker camps.
 
-* **Hardware Instanced Rendering**: Rather than forcing the CPU to issue thousands of separate draw commands for every goat or enemy knight on screen—which would instantly cause the browser to stutter and freeze—WebGPU passes a single master vector graphic model of the asset into the GPU's memory cache [2.4]. The engine then streams a lightweight matrix array of raw coordinate vectors [2.4]. The GPU draws tens of thousands of active moving units in a single, lightning-fast rendering pass, maintaining a locked 60+ FPS performance ceiling [2.4].
-* **Camera Visibility Culling Filters**: To protect computer memory, any resource node, tree sprout, worker, or enemy fortress block that moves outside the boundaries of the active monitor viewport has its drawing tasks automatically turned off by the engine loop [2.4]. It exists only as a few bytes of lightweight background math data until the camera scrolls back over its coordinates, completely preventing lag.
+---
 
-### 1.2 The Split-Screen Strategy Interface Design
-The user interface avoids the common game design pitfall of drawing interactive menus, texts, and shop cards inside the graphic execution layer.
+## 🛡️ 5. MODULAR CASTLE CONSTRUCTION & DEFENSIVE PHYSICS
 
-* **The Left Panel (70% Viewport View)**: A high-fidelity, interactive, WebGPU-accelerated vector canvas mapping out the living, breathing landscape [2.4]. This zone is fully scrollable using keyboard arrow mechanics.
-* **The Right Panel (30% Control Sidebar)**: Built entirely out of native HTML5, CSS3 Grid, and the HTML5 Drag-and-Drop API. Running on the browser's standard layout layer keeps button clicks, scrolling market listings, and text reading completely separate from the heavy graphics card pipeline. This makes your dashboard incredibly responsive and ultra-fast.
-
-------------------------------
-
-## SECTION 2: THE 11,000 km² MACRO-GEOGRAPHY BIOME ECOSYSTEM
-The map is split into three massive, geographically isolated environmental resource regions. No single sector contains all raw materials; this forces players and AI factions to actively communicate, coordinate, and trade surpluses across long distances.
-
-### 2.1 The Lush Greenery Zone (Parrot Green & Blue Regions)
-* **Environmental Makeup**: Dense pixel-art jungle canopies, wide-open grasslands, flowing river arrays, and wild medicinal herb patches.
-* **Primary Resources Yielded**: Abundant Timber Wood, organic foods, spun Cotton Fibres, and health-restoring Medicinal Herbs.
-* **Strategic Limitation**: Zero natural oil reserves.
-
-### 2.2 The Petroleum Sump Wasteland (Gray & Black Regions)
-* **Environmental Makeup**: Barren, rocky tar basins, sand dunes, and bubbling pools of crude pitch.
-* **Primary Resources Yielded**: High-value Black Crude Oil and heavy iron ore mineral veins deep beneath the desert surface.
-* **Strategic Limitation**: Barren soil—vegetation cannot grow, and livestock will starve to death here unless food is imported.
-
-### 2.3 The Delta Basin & Water Arteries (Maroon & Red Regions)
-* **Environmental Makeup**: Extensive systems of natural lakes, deep valleys, and rushing river streams.
-* **Primary Resources Yielded**: Total control of Fresh Water Usage. This biome acts as the master agricultural valve of the global map where resource River Dams are engineered.
-* **Strategic Limitation**: High vulnerability to cross-border raiding due to open valley pathways.
-
-------------------------------
-
-## SECTION 3: THE LIVING SIDE-MARKET ECONOMY & REPLICATING ASSETS
-The right-side control dashboard holds an interactive marketplace where every asset you buy is a living, changing part of your economy.
+Castle building features complete freeform drawing of architectural elements, realistic elevation physics, and deadly anti-siege traps:
 
 ```
-       [ 🪵 THE PASSIVE REVENUE ENGINE ]
-  [ Chop Forest Trees ] ➔ [ Pile Raw Timber Logs ] ➔ [ Furnace Combustion / Burn ]
-                                                          │
-          ┌───────────────────────────────────────────────┴───────────────────────────────┐
-          ▼                                                                               ▼
-[ STRUCTURAL BRICK HOUSING ]                                                    [ DYNAMIC INFLATION SELLING ]
-- Upgrades Nomad Canvas Tents                                                   - Explodes gold counters up to 500%
-- Protects livestock from Winter                                                - Bankrupts neighboring empire cash
+[ MOAT DITCH ] ➔ [ LOW CURTAIN WALL ] ➔ [ BATTLEMENTS ] ➔ [ SQUARE / ROUND TOWERS ]
+(Blocks Rams)    (Anti-Infantry)        (Braziers/Oil)    (Mounted Ballistas & Mangonels)
 ```
 
-### 3.1 The Living Livestock Replication Array
-* **The Shepherd's Flock (Goats & Sheep)**: Low gold cost to purchase from the sidebar menu. They graze on open green grass tiles and run on a strict, automated 10-minute exponential doubling script [2.4]:
-  * 00:00 Mins: 10 Goats placed down.
-  * 10:00 Mins: 20 Goats (Doubled) [2.4].
-  * 20:00 Mins: 40 Goats (Doubled) [2.4].
-  * 30:00 Mins: 80 Goats (Doubled) [2.4]!
-  * **Yield**: Generates passive wool and meat wealth to keep your growing family lines fed and clothed.
-* **The Pastoral Pasture (Cows & Cattle)**: Medium gold cost. They use a 15-minute real-world doubling multiplier. They consume twice the grazing space of goats but yield premium thick hides (leather for heavy armor forging) and massive food reserves that accelerate your population's health metrics.
-* **The Equestrian Stables (War Horses)**: High gold cost. Multiplies every 20 minutes. They yield zero food or gold income, but owning them is mandatory to upgrade your young men into elite light-cavalry units and high-speed Talwar Strike Squads on the macro war map.
+### 5.1 Fortification Types & Construction
+* **Wooden Palisades:** Cheap timber fences for early-game perimeter defense; easily chopped down or burned by fire.
+* **Low Stone Curtain Walls:** Slender stone perimeter walls.
+* **High Crenelated Stone Walls:** Thick, multi-tile defensive walls with battlements. Defenders station on top with arrow slit protection (+50% missile defense).
+* **Gatehouses (Small & Large):**
+  * Integrated with functional **iron portcullis** and **wooden drawbridge**.
+  * Can be locked or opened by the Lord.
+  * Features upper murder holes for defensive archers.
+* **Moats & Water Barriers:**
+  * Marked by the player around the castle perimeter.
+  * Spearmen, pikemen, and peasants dig moats tile-by-tile.
+  * Moats prevent siege towers, battering rams, and infantry from reaching the base of the walls until enemies spend minutes filling them back in!
 
-### 3.2 The Forestry & Lumber Engine
-* **The Timber Loop**: Your workers travel to forest tiles on the map to chop down trees, gathering raw logs into your inventory.
-* **The Replanting Cycle**: If you clear-cut a forest blindly to make quick money, the soil degrades into a dry desert, destroying your cows' pastures. Your workers must manually spend seedlings from their inventory to plant new forests, creating a fully renewable, strategic ecological loop!
-* **The Burn Option**: Logs can be actively burned as raw fuel. This is required to run your metallurgy smelting furnaces and keep your houses warm during the Deep Winter Freeze, preventing your babies from freezing to death.
+### 5.2 Tower Architecture & Elevation Mechanics
+* **Lookout Tower (Wood):** Early sightline extension.
+* **Perimeter Tower (Stone):** Small footprint, supports 4 archers.
+* **Defense Tower:** Medium height, high resilience, holds 8 archers.
+* **Square Tower:** Heavy fortress bastion, holds up to 15 units. Can mount **Tower Mangonels** (flings clusters of stones into attacking ranks) or **Tower Ballistas** (anti-siege harpoon bolts).
+* **Round Tower:** The pinnacle of Norman fortification engineering. Immune to tunneler cave-in undermining! Holds 20 units and massive siege artillery.
+* **Elevation Mechanics:** Archers atop high towers gain +100% projectile range and significant downward kinetic damage modifiers.
 
-### 3.3 The Dynamic Market Inflation Engine
-Product prices fluctuate based on global supply and demand. If you hoard wood or food during a harsh winter, the global price spikes across the other factions. You can cut off your exports to a rival to drive up the price, then sell it at a 500% markup to completely bankrupt their treasury.
+### 5.3 Active Castle Defenses
+* **Pitch Ditches (The Ring of Fire):**
+  * Black pitch laid invisibly on terrain outside the castle.
+  * Archers equipped with battlements braziers shoot flaming fire arrows at the pitch.
+  * The entire zone bursts into an uncontrollable wall of flames, incinerating entire enemy armies in seconds.
+* **Boiling Oil Cauldrons:**
+  * Engineers heat cauldrons of black pitch over charcoal smelters.
+  * They carry bubbling pots to the gatehouses and battlements.
+  * When enemy troops crowd the wall base or batter the gate, the boiling oil is poured down, melting through armor and killing dozens in a single pour.
+* **Killing Fields & Barbicans:** Labyrinthine stone entryways forcing attackers into deadly crossfires between crossbow towers and murder holes.
 
-### 3.4 The Brick Era Industrial Layer
-Once you gather enough capital, you unlock the Brick Era. Your workers bake raw river mud into hardened red bricks, allowing you to completely replace canvas tents with permanent brick homes, advanced smithies, and stone fortresses.
+---
 
-------------------------------
+## 💣 6. SIEGE MACHINERY & OFFENSIVE WARFARE
 
-## SECTION 4: THE HUMAN GENERATIONAL LIFECYCLE ENGINE
-Placing a New House from the side-list onto the map acts as a visual beacon that draws more people to your clan. Once inside your borders, every citizen follows a strict 3-Stage Aging Timeline mapped directly to the game years:
-
-```
-[ BUILD NEW HOUSE ] ➔ STAGE 1: CHILD (0-10 Mins)   ➔ Consumes Food Reserves // Zero Labor Output
-                           │
-                           ▼
-                      STAGE 2: YOUNG MAN (10-25 Mins) ➔ Assign to Mines, Dam, Spies, or Combat Army
-                           │
-                           ▼
-                      STAGE 3: OLD MAN (25-40 Mins)   ➔ Joins Bey Council // Unlocks Blueprints
-                           │
-                           ▼
-                      [ NATURAL DEATH ] ➔ Leadership Inherited by Eldest Living Offspring
-```
-
-1. **Stage 1: The Child (0 to 10 Minutes)**: Consumes a portion of your food reserves but generates zero manual labor. They represent your future empire investment.
-2. **Stage 2: The Young Man (10 to 25 Minutes)**: The child physically shifts into a powerful adult. You can assign them to harvest cotton, dig iron mines, operate the River Dam, train as specialized Spies, or draft them directly into the front-line army.
-3. **Stage 3: The Old Man (25 to 40 Minutes)**: Warriors age into gray-haired wise men. They can no longer sprint into fast battles, but they sit on your Bey Council, unlocking rare technological blueprints and boosting global faction loyalty.
-4. **Succession & Bloodlines**: At the 40-minute mark, the elder passes away naturally. If your main Chieftain leader dies, control of your Parrot Green empire transfers directly to his eldest young child, carrying your family legacy across generations.
-
-------------------------------
-
-## SECTION 5: GEOPOLITICAL FACTIONS & THE REGICIDE LAWS
-The world map contains 6 to 9 distinct, abstract color-coded kingdoms. Wars are not won by destroying random farms. To completely collapse a rival faction, you must execute a precise tactical strike to assassinate their leader.
+When assaulting enemy AI fortresses, siege weapons are constructed on the battlefield by specialized **Engineers** trained at the Engineers Guild:
 
 ```
-                  [ 🏰 THE CAPITAL CITADEL SECTOR ]
-  
-     [💂 Imperial Knights] ──► [🛡️ Inner Guard] ──► [👑 THE KING]
-     (Heavy Armor Block)       (Shield Wall)         (Life Bar: 100%)
-  ───────────────────────────────────────────────────────────────────
-  [🚨 Outer Walls] ◄─── Defense Layers ───► [🏹 Elite Archers]
+========================================================================================
+                                 [ SIEGE ARSENAL ]
+========================================================================================
+ SIEGE ENGINE       CREW REQ     FUNCTION & TACTICAL PURPOSE
+----------------------------------------------------------------------------------------
+ Battering Ram      4 Engineers  Heavy armored roof protects crew from arrows; delivers
+                                 devastating kinetic blows to shatter iron gates and walls.
+ Catapult           2 Engineers  Mobile rock thrower; fires medium boulders with direct
+                                 trajectory to breach stone curtain walls from a distance.
+ Trebuchet          3 Engineers  Colossal counterweight artillery; immense range. Can launch:
+                                 1. Giant stone boulders (pulverizes towers).
+                                 2. Diseased Rotting Cow Carcasses (spreads plague cloud).
+ Siege Tower        4 Engineers  Massive wooden tower rolled up to enemy walls; drops iron
+                                 ramp onto battlements, pouring dozens of Macemen over walls.
+ Portable Mantlet   1 Engineer   Large wheeled wooden shields providing +80% missile cover
+                                 for archers creeping into enemy arrow range.
+ Laddermen          1 Peasant    Carries long wooden ladder under fire, props it against the
+                                 stone wall for infantry to scale.
+ Subterranean       1 Tunneler   Digs tunnels beneath enemy towers, lighting timber props to
+ Tunnelers                       collapse the tower into rubble (countered by Round Towers).
+========================================================================================
 ```
 
-### 5.1 Faction Telemetry Metrics
-* **Your Clan (Parrot Green)**: Starts with basic leather tents. Relies entirely on high-mobility horse-archers, exponential resource multipliers, and generational human planning.
-* **The Northern Empire (Blue)**: Massive starting treasury and stone fortresses. Deploys heavily armored knights and slow, unbreakable shield-wall turtle defensive formations.
-* **The Steppe Horde (Gray)**: Chaos-driven, hyper-aggressive nomadic raiders. Launches massive horse-cavalry swarm charges that trample fences, gates, and player barricades.
-* **The Fallen Sultanate (Mahrooma / Maroon)**: A proud, ancient, but declining empire. Controls large capital cities backed by long-range stationary catapults and ballista defense arrays.
-* **The Blood Dynasty (Red)**: Treacherous, highly jealous regional rivals. Relies heavily on stealth shadow ambushes, sudden nighttime raids, and poison-tipped weaponry to assassinate high-tier targets.
-* **The Umbral Guild (Black)**: Secretive economic mercenaries. Focuses on setting up deep trade blockades, intercepting passing resource caravans, and triggering artificial food starvation cycles.
+---
 
-### 5.2 The King's Life Percentage Rule
-Every King sits inside a heavily fortified Citadel at the center of his capital city, protected by lines of Imperial Knights and a dense Inner Shield Guard. Every King displays a visible 100% Life Bar on screen. If that percentage hits 0%, the King is dead, his crown shatters, and his entire territory color immediately falls and vanishes from the world map.
+## 👑 7. THE LORD OF THE KEEP & REGICIDE VICTORY CONDITIONS
 
-### 5.3 The Emergency Safe-Rescue Climax
-If your capital city is breached and a hostile army surrounds your King, they will stand over him, slashing his health bar down second-by-second. If your reinforcing army or royal knights manage to wipe out the attackers and completely secure the throne room BEFORE the King's life percentage hits 0%, he is rescued.
+### 7.1 The Lord as the Ultimate Fortress Defense
+* The Lord begins at the throne room or atop the Keep's rooftop.
+* **Combat Telemetry:**
+  * Extremely high hit points (displayed on screen).
+  * Equips Masterwork Plate Armor with heavy damage mitigation.
+  * Cleaves multiple attackers with a devastating two-handed broadsword.
+  * If attackers breach the walls and storm the Keep, the Lord fights to the bitter end.
 
-### 5.4 The Hospital & Tactical Medical Facilities
-When your armies return from an intensive border war, they enter your territory wounded and depleted. To restore your military and save a rescued leader, you must build specialized Hospitals and Medical Facilities from your side-list menu:
-* **The Field Clinic Boost**: Once an endangered King is safely rescued by his people, routing him into a functioning medical facility automatically injects a 35% Health Recovery Boost, pulling him out of critical danger and stabilizing his life force line.
-* **Army Medical Recovery**: Wounded soldier groups stationed inside your Hospital zone automatically heal their damage metrics and recover their unit numbers over time, preventing you from losing veteran high-tier troops permanently.
+### 7.2 The Regicide Law
+* Destroying random granaries, farms, or walls does not win the war.
+* **The Lord's Death Ends the Realm:** The moment a Lord's health bar reaches 0%, his kingdom is instantly vanquished. His banner falls, surviving troops scatter or surrender, and his castle collapses into ruin.
+* **Wounded Lord & Emergency Extraction:** If the Lord survives an assault wounded, medical treatment and garrisoning inside the Keep restores his health bar over time.
 
-### 5.5 Tactical Weapon Progression & Shadow Espionage
-* **The Small Knife**: Cheap, basic iron steel weapon. Equipped automatically to early workers so they can defend their cotton fields against wildlife or lone enemy scouts.
-* **The Talwar (Curve Saber Sword)**: Mid-tier specialized weaponry. Gives your young warriors lethal, sweeping close-range damage modifiers, making your horse-archers deadly in sudden flank attacks.
-* **Heavy Plated Armor Rigging**: High-tier metallurgy block. Wrapped around your young men and war-horses to shield them from incoming missile fire, drastically lowering mortality rates during long siege battles.
-* **The Spy Network**: You can assign your smart young men to train as Spies. You send a spy into a rival's territory to secretly sneak into their compound at night and poison their cow pastures, set fire to their timber yards, or loosen the structural floodgates of their river dams, weakening their defenses from the inside before your main army even arrives.
-* **The Tribal Loyalty & Rebellion Loop**: Your wise old men on the Bey Council monitor your decisions. If you force workers to harvest cotton in freezing winter weather without heating fuel, or if you let a Gray Horde raid pass by without fighting back, your tribe's Loyalty Percentage Bar drops. If loyalty hits 0%, a civil war breaks out inside your own Parrot Green borders, forcing you to resolve an internal coup while managing external enemies.
+---
 
-------------------------------
+## 🔥 8. CASTLE EMERGENCIES & ENVIRONMENTAL CATSTROPHES
 
-## 🌦️ SECTION 6: THE SLOW-LOOP CLIMATE ENGINE
-Weather and terrain changes creep across the map over long hours, forcing you to constantly adapt your economic plans:
-* **The Spring Rain Loop**: The soil turns highly fertile. Wild grass grows rapidly, and your workers' cotton harvesting speeds jump by a massive 50%.
-* **The Deep Winter Freeze**: Creeps onto the map slowly every 30 minutes. The green grass dries up, and the river feeding your River Dam freezes solid, halting your water gold income. Your goats and cows will freeze and die unless you have baked Hardened Bricks and constructed thick brick houses to shelter them, forcing you to build grain and timber stockpiles during the summer months.
+A bustling medieval castle is vulnerable to internal and external disasters that require active disaster mitigation:
 
-------------------------------
+* **Spreading Fire Hazard:**
+  * A spark from a Baker's oven, Fletcher's torch, or flaming arrow can ignite a wooden building.
+  * Fire spreads dynamically based on building proximity and wind direction.
+  * **Countermeasure:** **Firewatch Water Wells** staffed by water-bearers who grab buckets and run to douse burning buildings before the whole town is reduced to ash.
+* **The Black Plague & Pestilence:**
+  * Rotting cow carcasses fired by enemy trebuchets or squalid living conditions create a spreading green pestilence cloud that poisons citizens and soldiers.
+  * **Countermeasure:** **The Apothecary / House of Healing** staffed by doctors who venture out with herbal potions to cure infected citizens.
+* **Wolf Packs & Wildlife:**
+  * Wild wolf packs prowl dense forests, attacking isolated woodcutters and hunters. Archers must be stationed on border palisades to cleanse wolf dens.
+* **Agricultural Blight & Rabid Bandits:**
+  * Locust swarms can devour wheat crops; bandit raiders from unmapped frontiers will attempt to burn outlying apple orchards.
 
-## 🎬 SECTION 7: CHRONOLOGICAL 4-PHASE PLAYTIME TIMELINE
+---
 
-### ⛺ Sequence 1: The Nomad Roots (Minutes 0 to 15)
-You spawn as a single Parrot Green tent in the wild grass. You command your 4 starting citizens to fight the terrain, harvest grass and cotton, and spin basic clothes. You buy 10 Goats and 5 Cows from the side-list and watch them double every 10 and 15 minutes to build your food supply. Your first generation of babies are born. You maintain bodyguards around your vulnerable leader's tent and pay heavy resource tributes to the massive Blue and Maroon empires to buy time.
+## 🎭 9. THE 4 ICONIC AI RIVAL LORDS (RAT, SNAKE, PIG, WOLF)
 
-### 🏗️ Sequence 2: The Brick & Citadel Expansion (Minutes 15 to 45)
-Your livestock multiplies into a massive herd, and your children hit their 10-minute aging mark, transforming into a powerful young workforce. You build Clay Kilns, manufacture bricks, and rebuild your town into a permanent brick fortress city. You build a massive River Dam to lock down an explosive gold stream and construct a thick Stone Citadel around your King, staffing it with heavily armed Imperial Knights for security.
+Grid Protocol integrates the legendary personality AI archetypes from Stronghold 1, complete with distinctive castle architecture, strategic doctrines, and psychological soundboard taunts:
 
-### 🌋 Sequence 3: The Industrial Heist & Inflation (Minutes 45 to 90)
-The 6 to 9 AI factions unleash massive wars against each other, burning down each other's fields and over-clearing their forests, creating a global resource famine. The Market Inflation Engine activates. You manipulate prices by hoarding wood and food, selling them to the Blue Empire and Gray Horde at a 500% markup. Simultaneously, you deploy Spies to infiltrate the Red Dynasty, secretly poisoning their cattle pastures and burning their timber yards from the shadows to weaken their operational strength.
+```
+========================================================================================
+                          [ THE FOUR RIVAL LORDS ARCHETYPES ]
+========================================================================================
+ LORD                 ARCHITECTURAL DOCTRINE           MILITARY STRATEGY & WEAKNESS
+----------------------------------------------------------------------------------------
+ 🐀 The Rat           Fragile wooden palisades, flimsy  Mass swarms of cheap Spearmen and
+ (Duc de Puce)        low stone, haphazard layouts.    Archers. Cowardly; panics easily.
+                      No moats, zero siege engines.    Extremely vulnerable to fire & cavalry.
+                      
+ 🐍 The Snake         Intricate labyrinths, deep        Heavy reliance on Crossbow crossfires,
+ (Duc Beauregard)     water moats, hidden pitch traps,  pitch ditch infernos, and sudden night
+                      tight barbicans and gatehouses.   ambushes. Weak heavy armor; timid offense.
+                      
+ 🐖 The Pig           Squat, thick iron-reinforced      Aggressive industrial expansion. Fields
+ (Duc Truffe)         stone fortresses. Deep mining     massive waves of Macemen, Crossbowmen,
+                      stockpiles; utilitarian design.   and Battering Rams. Highly destructive.
+                      
+ 🐺 The Wolf          Impregnable concentric stone      Master of total siege warfare. Builds
+ (Duc Volpe)          citadels with round towers,       Catapult batteries and Trebuchets. Deploys
+                      mangonels, and double walls.      disciplined Swordsmen, Pikemen, and Knights.
+========================================================================================
+```
 
-### 👑 Sequence 4: The Ultimate Purification Strike (Minute 90+)
-Global winter sets in, freezing open rivers and testing your brick-housing insulation fuel reserves. You open your forges, equip your workforce with sharp Talwars and Heavy Plated Armor, and march across the map. You don't waste time attacking small towns; your cavalry charges straight into the enemy capital cities. You close your River Dam gates completely, starving down-river enemies of water. Your heavy cavalry breaches the enemy capital Citadel, crashes into their Imperial Knights, smashes their Inner Shield Guard, and attacks their King to drop his 100% Life Bar to 0%—instantly collapsing their empire and painting the whole map a victorious, unified Parrot Green!
+---
+
+## 🖥️ 10. SYSTEM ARCHITECTURE & INTERFACE DESIGN
+
+```
+========================================================================================
+               [ SPLIT-SCREEN MEDIEVAL CONTROL DASHBOARD (GRID PROTOCOL) ]
+========================================================================================
+[ LEFT SCREEN (70%): WEBGPU PIXIJS V8 CANVAS ]    [ RIGHT SCREEN (30%): SCRIBE & TREASURY ]
+ - 100,000+ Instanced Sprites (Workers, Troops)    - Scribe's Voice Ledger ("People love you!")
+ - Dynamic Shadow & Wall Crenelation Physics       - Popularity Meter Breakdown (0 - 100)
+ - Real-Time Fire Propagation & Water Wells        - Rations Slider (No / Half / Normal / Double)
+ - Projectile Ballistics & Pitch Ditch Infernos    - Tax / Bribe Treasury Controller
+ - Wall Drag-and-Drop & Freeform Tower Snapping   - Granary & Stockpile Real-Time Counters
+ - Castle Keep with Roof-Mounted Lord             - Barracks Recruitment & Armory Inventory
+========================================================================================
+```
+
+### 10.1 WebGPU Native Performance
+* **Zero Canvas Latency:** Built on PixiJS v8 / WebGPU pipeline, capable of rendering tens of thousands of active workers, oxen, arrows, trebuchet boulders, and smoke particles at a locked 60+ FPS.
+* **Precise Isometric Grid Snapping:** Walls connect seamlessly into corner bastions, battlements automatically calculate crenelations, and gates align directly with player-drawn road networks.
+
+### 10.2 The Scribe's Audio-Visual Feedback
+* Voice-acted and visual notifications echoing the immortal charm of Stronghold 1:
+  * *"The people loathe you, Sire!"* (When Popularity drops below 50).
+  * *"The people love you, my Lord!"* (When Popularity exceeds 75).
+  * *"Our food stocks are dwindling, my Liege!"* (When Granary runs empty).
+  * *"Wood is low, Sire!"* (When Stockpile lacks lumber for construction).
+  * *"No taxes is good taxes, that's what I say!"* (When taxes are set to zero).
+
+---
+
+## 📊 11. FEATURE COMPARISON MATRIX: STRONGHOLD 1 vs. GRID PROTOCOL
+
+| Feature Area | Stronghold 1 (Firefly Studios, 2001) | Grid Protocol Implementation |
+| :--- | :--- | :--- |
+| **Popularity System** | Granary rations, taxes, ale, religion, fear factor (0–100) | **100% Faithful Recreation:** Full Granary variety, tax/bribe treasury, ale, chapel blessings, cruelty vs. beauty fear factor. |
+| **Logistics & Economy** | Physical carrying to Stockpile, Granary, Armory; Oxen for stone | **Full Physical Logistics:** Every loaf of bread, iron bar, and stone block physically hauled across the map. |
+| **Military Recruitment**| Campfire peasants + Weapon in Armory + Gold at Barracks | **Exact Smithing Pipeline:** Bowyers, Armorers, Blacksmiths, Tanners supply the Armory; peasants drafted directly. |
+| **Castle Construction** | Freeform curtain walls, towers, crenelations, gatehouses, moats | **Modern WebGPU Builder:** Freeform wall drawing, round/square towers, working portcullises, diggable moats. |
+| **Active Defenses** | Pitch ditches ignited by flaming arrows, boiling oil cauldrons | **Simulated Fire & Pitch:** Volatile pitch ditches triggered by brazier fire; boiling oil poured onto gate attackers. |
+| **Siege Warfare** | Trebuchets (stones & cows), rams, siege towers, tunnelers | **Complete Siege Engine Suite:** Fully animated rams, catapults, trebuchets with disease cows, and tunnel undermining. |
+| **Regicide Mechanic** | The Lord atop the Keep must survive; death = defeat | **Lord's Throne Defense:** King/Lord with massive HP pool, cleave broadsword, and last-stand Keep mechanics. |
+| **AI Personalities** | Rat, Snake, Pig, Wolf with custom castles and video taunts | **4 Distinct AI Personalities:** Dynamic castle layouts, distinct economic priority trees, and strategic siege behaviors. |
+| **Graphics & Platform** | 2D Isometric DirectDraw (Windows 98/2000/XP) | **Next-Gen WebGPU / Modern Browser:** 4K ultra-high resolution, 60+ FPS, zero-install instant web execution. |
+
+---
+
+## 🚀 12. CONCLUSION & PRODUCTION ROADMAP
+
+Grid Protocol brings the timeless, unmatched soul of **Stronghold 1** to modern web architecture. By combining **deep historical castle simulation, physical production chains, tactile fortification building, brutal siege physics, and charismatic AI lords**, the game offers players the definitive medieval fortress experience.

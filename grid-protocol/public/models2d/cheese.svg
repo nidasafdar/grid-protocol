@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="80" rx="32" ry="5" fill="#000" opacity="0.2"/>
+  <ellipse cx="50" cy="46" rx="30" ry="14" fill="#ecc94b" stroke="#d69e2e" stroke-width="2"/>
+  <path d="M20 46 L20 66 Q50 82 80 66 L80 46" fill="#d69e2e" stroke="#b7791f" stroke-width="2"/>
+  <!-- Cut wedge hole -->
+  <polygon points="50,46 36,44 42,56" fill="#b7791f"/>
+  <circle cx="34" cy="58" r="2.5" fill="#b7791f"/>
+  <circle cx="62" cy="56" r="3" fill="#b7791f"/>
+  <circle cx="48" cy="62" r="2" fill="#b7791f"/>
+</svg>

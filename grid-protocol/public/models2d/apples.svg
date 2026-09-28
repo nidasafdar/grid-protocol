@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="85" rx="30" ry="5" fill="#000" opacity="0.2"/>
+  <!-- Basket -->
+  <path d="M26 48 L74 48 L68 84 L32 84 Z" fill="#8d6e63" stroke="#5d4037" stroke-width="2"/>
+  <!-- Basket weave lines -->
+  <line x1="30" y1="60" x2="70" y2="60" stroke="#5d4037" stroke-width="1.5"/>
+  <line x1="32" y1="72" x2="68" y2="72" stroke="#5d4037" stroke-width="1.5"/>
+  <!-- Apples inside -->
+  <circle cx="38" cy="44" r="9" fill="#e53e3e"/>
+  <circle cx="50" cy="40" r="9" fill="#e53e3e"/>
+  <circle cx="62" cy="44" r="9" fill="#e53e3e"/>
+  <circle cx="44" cy="34" r="8" fill="#c53030"/>
+  <circle cx="56" cy="34" r="8" fill="#c53030"/>
+  <!-- Leaf -->
+  <path d="M56 26 Q62 20 66 24 Q62 28 56 26" fill="#38a169"/>
+</svg>

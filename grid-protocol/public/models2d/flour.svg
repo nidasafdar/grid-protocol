@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M32 30 Q50 24 68 30 Q76 60 72 85 Q50 90 28 85 Q24 60 32 30 Z" fill="#f7fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <!-- Tied top ears -->
+  <ellipse cx="36" cy="25" rx="5" ry="4" fill="#edf2f7"/>
+  <ellipse cx="64" cy="25" rx="5" ry="4" fill="#edf2f7"/>
+  <rect x="36" y="28" width="28" height="4" fill="#744210"/>
+  <!-- Wheat stamp on sack -->
+  <path d="M50 48 L50 68" stroke="#d69e2e" stroke-width="2"/>
+  <ellipse cx="47" cy="52" rx="2" ry="4" transform="rotate(-30 47 52)" fill="#ecc94b"/>
+  <ellipse cx="53" cy="52" rx="2" ry="4" transform="rotate(30 53 52)" fill="#ecc94b"/>
+</svg>

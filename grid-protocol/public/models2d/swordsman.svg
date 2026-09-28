@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="95" rx="24" ry="5" fill="#000" opacity="0.3"/>
+  <!-- Broadsword -->
+  <line x1="72" y1="88" x2="72" y2="30" stroke="#e2e8f0" stroke-width="4"/>
+  <line x1="64" y1="40" x2="80" y2="40" stroke="#d69e2e" stroke-width="3"/>
+  <circle cx="72" cy="30" r="3" fill="#d69e2e"/>
+  <!-- Full Plate Armor Body -->
+  <rect x="40" y="66" width="9" height="26" fill="#718096"/>
+  <rect x="51" y="66" width="9" height="26" fill="#718096"/>
+  <path d="M32 30 L68 30 L64 68 L36 68 Z" fill="#a0aec0"/>
+  <!-- Shield on left arm -->
+  <path d="M22 36 L36 36 L36 62 Q29 70 22 62 Z" fill="#c53030" stroke="#ecc94b" stroke-width="1.5"/>
+  <!-- Great Helm -->
+  <rect x="42" y="10" width="16" height="18" rx="3" fill="#cbd5e0" stroke="#4a5568"/>
+  <line x1="45" y1="18" x2="55" y2="18" stroke="#1a202c" stroke-width="2"/>
+  <line x1="50" y1="13" x2="50" y2="23" stroke="#1a202c" stroke-width="2"/>
+</svg>

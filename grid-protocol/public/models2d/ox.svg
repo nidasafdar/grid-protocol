@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="94" rx="36" ry="6" fill="#000" opacity="0.3"/>
+  <ellipse cx="48" cy="58" rx="30" ry="18" fill="#795548"/>
+  <rect x="26" y="68" width="7" height="24" fill="#4e342e"/>
+  <rect x="36" y="68" width="7" height="24" fill="#4e342e"/>
+  <rect x="56" y="68" width="7" height="24" fill="#4e342e"/>
+  <rect x="66" y="68" width="7" height="24" fill="#4e342e"/>
+  <!-- Heavy Yoke Harness -->
+  <rect x="64" y="46" width="6" height="22" rx="2" fill="#d7ccc8" stroke="#3e2723"/>
+  <!-- Head & Heavy Horns -->
+  <ellipse cx="80" cy="50" rx="10" ry="9" fill="#5d4037"/>
+  <path d="M76 44 Q76 34 84 36" stroke="#d7ccc8" stroke-width="3" fill="none"/>
+</svg>

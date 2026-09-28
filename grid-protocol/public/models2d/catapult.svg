@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="94" rx="38" ry="5" fill="#000" opacity="0.3"/>
+  <!-- Wheels -->
+  <circle cx="28" cy="80" r="9" fill="#5d4037"/>
+  <circle cx="72" cy="80" r="9" fill="#5d4037"/>
+  <!-- Frame base -->
+  <rect x="20" y="68" width="60" height="8" rx="2" fill="#8d6e63"/>
+  <polygon points="45,68 55,68 50,35" fill="#6d4c41"/>
+  <!-- Throwing Arm loaded with boulder -->
+  <line x1="30" y1="68" x2="72" y2="28" stroke="#795548" stroke-width="4"/>
+  <!-- Cup with Stone Boulder -->
+  <circle cx="76" cy="24" r="7" fill="#a0aec0" stroke="#4a5568" stroke-width="1.5"/>
+</svg>

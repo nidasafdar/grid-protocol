@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Ditch trench -->
+  <polygon points="10,65 90,65 82,88 18,88" fill="#1a202c"/>
+  <!-- Roaring Flames -->
+  <path d="M22 68 Q28 35 34 55 Q42 22 48 48 Q56 18 64 52 Q72 32 78 68 Z" fill="#dd6b20"/>
+  <path d="M28 68 Q34 45 38 58 Q46 32 50 52 Q56 30 62 55 Q68 40 72 68 Z" fill="#ecc94b"/>
+</svg>

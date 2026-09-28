@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="95" rx="22" ry="5" fill="#000" opacity="0.3"/>
+  <!-- Colossal Pike -->
+  <line x1="74" y1="96" x2="74" y2="2" stroke="#5d4037" stroke-width="3"/>
+  <polygon points="74,1 70,10 78,10" fill="#e2e8f0" stroke="#718096"/>
+  <!-- Plate Armor -->
+  <rect x="41" y="68" width="8" height="24" fill="#718096"/>
+  <rect x="51" y="68" width="8" height="24" fill="#718096"/>
+  <path d="M34 30 L66 30 L64 68 L36 68 Z" fill="#a0aec0"/>
+  <!-- Steel Sallet Helmet -->
+  <circle cx="50" cy="20" r="11" fill="#fbd38d"/>
+  <path d="M38 18 Q50 8 62 18 L64 24 L36 24 Z" fill="#718096"/>
+  <rect x="42" y="21" width="16" height="2" fill="#1a202c"/>
+</svg>
