@@ -189,7 +189,7 @@ export interface Mission {
         suitConsoleContainer.visible = false;
         briefcaseNode.visible = false;
         isInventoryPhaseActive = false;
-        this.sound.play('sfx_boom', { volume: 0.6 });
+        (window as any)?.sound?.play?.('sfx_boom', { volume: 0.6 });
 
         const clearTitle = new Text({
           text: 'KEYCARD VERIFIED OUT OF SUIT LEFT POCKET\nCLASSIFIED RECORD SECURED SUCCESSFULLY\n\nMISSION 1 CLEAR',
