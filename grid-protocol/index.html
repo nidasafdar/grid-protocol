@@ -4,10 +4,429 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>grid-protocol</title>
+    <title>GRID PROTOCOL // 11,000 km² WebGPU Empire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div id="app"></div>
+    <div id="game-root">
+      <!-- LEFT PANEL (70%): WEBGPU HARDWARE RENDERING VIEWPORT -->
+      <main id="viewport-panel">
+        <div id="canvas-container"></div>
+        
+        <!-- Viewport Floating Telemetry Bar -->
+        <header id="viewport-hud">
+          <div class="hud-chip faction-chip">
+            <span class="status-indicator parrot-green"></span>
+            <span class="chip-label">FACTION:</span>
+            <strong class="chip-val">PARROT GREEN CLAN</strong>
+          </div>
+          <div class="hud-chip">
+            <span class="chip-label">BIOME:</span>
+            <strong class="chip-val" id="hud-biome-name">LUSH GREENERY ZONE (740 km²)</strong>
+          </div>
+          <div class="hud-chip">
+            <span class="chip-label">CAMERA:</span>
+            <strong class="chip-val font-mono" id="hud-camera-coords">X: 000 | Y: 000</strong>
+          </div>
+          <div class="hud-chip">
+            <span class="chip-label">SEASON:</span>
+            <strong class="chip-val" id="hud-season-state">SPRING RAIN (+50% HARVEST)</strong>
+          </div>
+          <div class="hud-chip fps-chip">
+            <span class="chip-label">FPS:</span>
+            <strong class="chip-val font-mono" id="hud-fps-val">60</strong>
+          </div>
+        </header>
+
+        <!-- Viewport Navigation Hints Overlay -->
+        <div id="viewport-controls-hint">
+          <span>[W, A, S, D] or [Arrow Keys] Pan Camera</span>
+          <span class="hint-sep">•</span>
+          <span>Click & Drag Viewport</span>
+          <span class="hint-sep">•</span>
+          <span>11,000 km² Macro Matrix</span>
+        </div>
+      </main>
+
+      <!-- RIGHT PANEL (30%): NATIVE HTML5 DOM CONTROL SIDEBAR -->
+      <aside id="sidebar-panel">
+        <!-- Empire Global Resource Header -->
+        <section id="sidebar-resources-header">
+          <div class="resource-badge" title="Empire Treasury">
+            <span class="res-icon">🪙</span>
+            <div class="res-info">
+              <span class="res-tag">GOLD</span>
+              <strong class="res-number" id="res-gold">1,250</strong>
+            </div>
+          </div>
+          <div class="resource-badge" title="Food Grain Reserves">
+            <span class="res-icon">🌾</span>
+            <div class="res-info">
+              <span class="res-tag">FOOD</span>
+              <strong class="res-number" id="res-food">840</strong>
+            </div>
+          </div>
+          <div class="resource-badge" title="Raw Timber Stockpile">
+            <span class="res-icon">🪵</span>
+            <div class="res-info">
+              <span class="res-tag">TIMBER</span>
+              <strong class="res-number" id="res-timber">320</strong>
+            </div>
+          </div>
+          <div class="resource-badge" title="Hardened Red Bricks">
+            <span class="res-icon">🧱</span>
+            <div class="res-info">
+              <span class="res-tag">BRICKS</span>
+              <strong class="res-number" id="res-bricks">50</strong>
+            </div>
+          </div>
+          <div class="resource-badge" title="Citizen Population">
+            <span class="res-icon">👥</span>
+            <div class="res-info">
+              <span class="res-tag">POPULATION</span>
+              <strong class="res-number" id="res-pop">28</strong>
+            </div>
+          </div>
+          <div class="resource-badge" title="Bey Council Loyalty Rating">
+            <span class="res-icon">⚖️</span>
+            <div class="res-info">
+              <span class="res-tag">LOYALTY</span>
+              <strong class="res-number" id="res-loyalty">94%</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sidebar Navigation Tabs -->
+        <nav id="sidebar-nav-tabs">
+          <button class="nav-tab active" data-tab="tab-economy">
+            <span class="tab-emoji">🛒</span>
+            <span>Market & Assets</span>
+          </button>
+          <button class="nav-tab" data-tab="tab-citadel">
+            <span class="tab-emoji">👑</span>
+            <span>King & Citadel</span>
+          </button>
+          <button class="nav-tab" data-tab="tab-geopolitics">
+            <span class="tab-emoji">🌐</span>
+            <span>Factions & Trade</span>
+          </button>
+        </nav>
+
+        <!-- Tab 1: Market & Replicating Assets -->
+        <section id="tab-economy" class="tab-pane active">
+          <div class="panel-section-title">
+            <h3>LIVESTOCK REPLICATION ENGINE</h3>
+            <span class="section-badge">Automated Timers</span>
+          </div>
+
+          <!-- Livestock Card: Goats -->
+          <article class="asset-card" id="card-goats">
+            <div class="asset-card-header">
+              <div class="asset-badge-title">
+                <span class="asset-avatar">🐐</span>
+                <div>
+                  <h4>The Shepherd's Flock (Goats)</h4>
+                  <p class="asset-desc">10-Min Exponential Doubling script [2.4]. Yields wool & meat.</p>
+                </div>
+              </div>
+              <div class="asset-cost">
+                <span class="cost-num">100</span>
+                <span class="cost-unit">🪙</span>
+              </div>
+            </div>
+            <div class="asset-metrics-row">
+              <div class="metric-item">
+                <span class="metric-lbl">ACTIVE HERD</span>
+                <strong class="metric-val" id="metric-goats-count">10</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-lbl">NEXT DOUBLING</span>
+                <strong class="metric-val font-mono" id="metric-goats-timer">09:54</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-lbl">NEXT BATCH</span>
+                <strong class="metric-val text-green" id="metric-goats-next">+10</strong>
+              </div>
+            </div>
+            <div class="asset-action-row">
+              <button class="btn-buy" id="btn-buy-goats">+ Buy 10 Goats (100g)</button>
+            </div>
+          </article>
+
+          <!-- Livestock Card: Cows -->
+          <article class="asset-card" id="card-cows">
+            <div class="asset-card-header">
+              <div class="asset-badge-title">
+                <span class="asset-avatar">🐄</span>
+                <div>
+                  <h4>The Pastoral Pasture (Cattle)</h4>
+                  <p class="asset-desc">15-Min Doubling. Thick leather for heavy armor & massive food.</p>
+                </div>
+              </div>
+              <div class="asset-cost">
+                <span class="cost-num">250</span>
+                <span class="cost-unit">🪙</span>
+              </div>
+            </div>
+            <div class="asset-metrics-row">
+              <div class="metric-item">
+                <span class="metric-lbl">ACTIVE HERD</span>
+                <strong class="metric-val" id="metric-cows-count">5</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-lbl">NEXT DOUBLING</span>
+                <strong class="metric-val font-mono" id="metric-cows-timer">14:48</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-lbl">NEXT BATCH</span>
+                <strong class="metric-val text-green" id="metric-cows-next">+5</strong>
+              </div>
+            </div>
+            <div class="asset-action-row">
+              <button class="btn-buy" id="btn-buy-cows">+ Buy 5 Cows (250g)</button>
+            </div>
+          </article>
+
+          <!-- Livestock Card: War Horses -->
+          <article class="asset-card" id="card-horses">
+            <div class="asset-card-header">
+              <div class="asset-badge-title">
+                <span class="asset-avatar">🐎</span>
+                <div>
+                  <h4>Equestrian Stables (War Horses)</h4>
+                  <p class="asset-desc">20-Min Doubling. Unlocks Light Cavalry & Talwar Strike Squads.</p>
+                </div>
+              </div>
+              <div class="asset-cost">
+                <span class="cost-num">500</span>
+                <span class="cost-unit">🪙</span>
+              </div>
+            </div>
+            <div class="asset-metrics-row">
+              <div class="metric-item">
+                <span class="metric-lbl">ACTIVE HERD</span>
+                <strong class="metric-val" id="metric-horses-count">2</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-lbl">NEXT DOUBLING</span>
+                <strong class="metric-val font-mono" id="metric-horses-timer">19:35</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-lbl">NEXT BATCH</span>
+                <strong class="metric-val text-green" id="metric-horses-next">+2</strong>
+              </div>
+            </div>
+            <div class="asset-action-row">
+              <button class="btn-buy" id="btn-buy-horses">+ Buy 2 War Horses (500g)</button>
+            </div>
+          </article>
+
+          <!-- Forestry & Brick Expansion Operations -->
+          <div class="panel-section-title">
+            <h3>FORESTRY & BRICK ERA</h3>
+            <span class="section-badge">Industrial Loop</span>
+          </div>
+
+          <div class="action-grid">
+            <div class="action-tile" id="tile-chop-timber">
+              <span class="tile-icon">🪓</span>
+              <strong>Harvest Timber</strong>
+              <small>+40 Logs // Needs Forest</small>
+              <button class="btn-tile" id="btn-action-harvest">Chop (10s)</button>
+            </div>
+            <div class="action-tile" id="tile-replant-seedling">
+              <span class="tile-icon">🌱</span>
+              <strong>Replant Seedlings</strong>
+              <small>Prevent Soil Desertification</small>
+              <button class="btn-tile" id="btn-action-replant">Plant (-10🪙)</button>
+            </div>
+            <div class="action-tile" id="tile-bake-bricks">
+              <span class="tile-icon">🧱</span>
+              <strong>Bake Hard Bricks</strong>
+              <small>River Mud + Kiln Heat</small>
+              <button class="btn-tile" id="btn-action-brick">Bake (+25🧱)</button>
+            </div>
+            <div class="action-tile" id="tile-burn-fuel">
+              <span class="tile-icon">🔥</span>
+              <strong>Burn Fuel Stockpile</strong>
+              <small>Warmth Against Winter</small>
+              <button class="btn-tile" id="btn-action-burn">Burn (-20🪵)</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 2: King & Citadel -->
+        <section id="tab-citadel" class="tab-pane">
+          <div class="panel-section-title">
+            <h3>CITADEL THRONE ROOM // REGICIDE PROTOCOL</h3>
+            <span class="section-badge badge-warning">Target of Regicide</span>
+          </div>
+
+          <!-- King Status Card -->
+          <article class="asset-card king-card">
+            <div class="king-header-row">
+              <div class="king-profile">
+                <span class="crown-badge">👑</span>
+                <div>
+                  <h4>Chieftain Arsalan of Parrot Green</h4>
+                  <small>Life Percentage Rule [Section 5.2]</small>
+                </div>
+              </div>
+              <span class="king-status-tag safe" id="king-status-indicator">SECURE</span>
+            </div>
+
+            <!-- King's 100% Life Bar -->
+            <div class="health-bar-container">
+              <div class="health-bar-labels">
+                <span>KING'S VITAL LIFE FORCE</span>
+                <strong class="font-mono text-cyan" id="king-health-num">100%</strong>
+              </div>
+              <div class="health-track">
+                <div class="health-fill" id="king-health-bar" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <p class="king-warning-text">
+              ⚠️ If the King's Life Bar hits 0%, the crown shatters and the entire Parrot Green empire immediately vanishes from the world map.
+            </p>
+
+            <div class="king-action-buttons">
+              <button class="btn-rescue" id="btn-test-attack">Simulate Attack (-20% HP)</button>
+              <button class="btn-hospital" id="btn-hospital-boost">🏥 Hospital Rescue (+35% Boost)</button>
+            </div>
+          </article>
+
+          <!-- Generational Human Lifecycle -->
+          <div class="panel-section-title">
+            <h3>GENERATIONAL HUMAN AGING TIMELINE</h3>
+            <span class="section-badge">40-Minute Succession</span>
+          </div>
+
+          <div class="lifecycle-timeline">
+            <div class="lifecycle-step active">
+              <div class="step-bullet">1</div>
+              <div class="step-body">
+                <strong>Stage 1: Child (0–10 Mins)</strong>
+                <p>Consumes food reserves. Zero manual labor output.</p>
+                <span class="step-badge">Active: 6 Children</span>
+              </div>
+            </div>
+            <div class="lifecycle-step active">
+              <div class="step-bullet">2</div>
+              <div class="step-body">
+                <strong>Stage 2: Young Man (10–25 Mins)</strong>
+                <p>Mines, Dam workers, Spies, and frontline Talwar warriors.</p>
+                <span class="step-badge text-cyan">Active: 16 Workers</span>
+              </div>
+            </div>
+            <div class="lifecycle-step">
+              <div class="step-bullet">3</div>
+              <div class="step-body">
+                <strong>Stage 3: Old Man (25–40 Mins)</strong>
+                <p>Bey Council elder. Boosts loyalty and unlocks blueprints.</p>
+                <span class="step-badge text-gold">Active: 6 Elders</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 3: Geopolitics & Dynamic Market Inflation -->
+        <section id="tab-geopolitics" class="tab-pane">
+          <div class="panel-section-title">
+            <h3>DYNAMIC MARKET INFLATION ENGINE</h3>
+            <span class="section-badge badge-surge">Surge: Up to 500%</span>
+          </div>
+
+          <!-- Market Ticker Grid -->
+          <div class="market-ticker-list">
+            <div class="ticker-row">
+              <span class="item-name">🪵 Raw Timber Logs</span>
+              <span class="item-base font-mono">15 🪙</span>
+              <span class="item-mult font-mono text-green" id="ticker-timber-mult">+140%</span>
+              <button class="btn-ticker-sell" id="btn-sell-timber">Dump 20 Logs</button>
+            </div>
+            <div class="ticker-row">
+              <span class="item-name">🌾 Organic Grain Food</span>
+              <span class="item-base font-mono">10 🪙</span>
+              <span class="item-mult font-mono text-green" id="ticker-food-mult">+220%</span>
+              <button class="btn-ticker-sell" id="btn-sell-food">Dump 50 Food</button>
+            </div>
+            <div class="ticker-row">
+              <span class="item-name">🛢️ Black Crude Oil</span>
+              <span class="item-base font-mono">60 🪙</span>
+              <span class="item-mult font-mono text-red" id="ticker-oil-mult">+480% (Sump Crisis)</span>
+              <button class="btn-ticker-sell disabled">No Reserve</button>
+            </div>
+            <div class="ticker-row">
+              <span class="item-name">💧 Fresh Dam Water</span>
+              <span class="item-base font-mono">35 🪙</span>
+              <span class="item-mult font-mono text-green" id="ticker-water-mult">+180%</span>
+              <button class="btn-ticker-sell" id="btn-sell-water">Export Valve</button>
+            </div>
+          </div>
+
+          <!-- 6 Rival Factions Status -->
+          <div class="panel-section-title">
+            <h3>REGIONAL FACTION POWER MATRIX</h3>
+            <span class="section-badge">6 Geopolitical Powers</span>
+          </div>
+
+          <ul class="faction-list">
+            <li class="faction-item parrot">
+              <div class="faction-avatar-dot parrot-green"></div>
+              <div class="faction-meta">
+                <strong>Your Clan (Parrot Green)</strong>
+                <small>Mobility, Exponential Multipliers, Bloodline Succession</small>
+              </div>
+              <span class="faction-rel text-cyan">ALLIED</span>
+            </li>
+            <li class="faction-item blue">
+              <div class="faction-avatar-dot blue-flag"></div>
+              <div class="faction-meta">
+                <strong>The Northern Empire (Blue)</strong>
+                <small>Stone Fortresses, Imperial Knights Turtle Shield Wall</small>
+              </div>
+              <span class="faction-rel text-gold">NEUTRAL</span>
+            </li>
+            <li class="faction-item gray">
+              <div class="faction-avatar-dot gray-flag"></div>
+              <div class="faction-meta">
+                <strong>The Steppe Horde (Gray)</strong>
+                <small>Hyper-Aggressive Nomads, Swarm Cavalry Charges</small>
+              </div>
+              <span class="faction-rel text-red">HOSTILE</span>
+            </li>
+            <li class="faction-item maroon">
+              <div class="faction-avatar-dot maroon-flag"></div>
+              <div class="faction-meta">
+                <strong>The Fallen Sultanate (Maroon)</strong>
+                <small>River Delta Valve, Stationary Heavy Catapults</small>
+              </div>
+              <span class="faction-rel text-gold">TRIBUTE</span>
+            </li>
+            <li class="faction-item red">
+              <div class="faction-avatar-dot red-flag"></div>
+              <div class="faction-meta">
+                <strong>The Blood Dynasty (Red)</strong>
+                <small>Stealth Night Raids, Poison-Tipped Sabotage</small>
+              </div>
+              <span class="faction-rel text-red">DANGER</span>
+            </li>
+            <li class="faction-item black">
+              <div class="faction-avatar-dot black-flag"></div>
+              <div class="faction-meta">
+                <strong>The Umbral Guild (Black)</strong>
+                <small>Economic Blockades, Artificial Starvation Cycles</small>
+              </div>
+              <span class="faction-rel text-muted">SHADOW</span>
+            </li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
