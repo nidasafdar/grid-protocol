@@ -1,16 +1,79 @@
 // src/main.ts
+import './style.css';
 import { Application, Graphics, Container, Text } from 'pixi.js';
+import type { Mission, GamePhase } from './interfaces/GameTypes';
 
-export interface Mission {
-  id: number;
-  title: string;
-  instructions: string;
-  timeLimit: number;
-  targetScore: number;
+// --- Web Audio SFX Synthesizer (Zero-dependency Audio Engine) ---
+class SoundEngine {
+  private ctx: AudioContext | null = null;
+
+  private initCtx() {
+    if (!this.ctx && typeof window !== 'undefined') {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (AudioCtx) {
+        this.ctx = new AudioCtx();
+      }
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  playType() {
+    this.initCtx();
+    if (!this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(800 + Math.random() * 400, this.ctx.currentTime);
+    gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.04);
+  }
+
+  playSuccess() {
+    this.initCtx();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * 0.08);
+      gain.gain.setValueAtTime(0.08, now + i * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.3);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now + i * 0.08);
+      osc.stop(now + i * 0.08 + 0.35);
+    });
+  }
+
+  playAction() {
+    this.initCtx();
+    if (!this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.12);
+  }
 }
 
+const sfx = new SoundEngine();
+
 (async () => {
-  // Initialize the low-level WebGPU engine canvas smoothly [2.4]
+  // 1. Initialize PixiJS Engine
   const app = new Application();
   await app.init({
     width: 960,
@@ -18,187 +81,252 @@ export interface Mission {
     backgroundColor: 0x05070f,
     preference: 'webgpu'
   });
-  document.body.appendChild(app.canvas);
 
+  const appContainer = document.getElementById('app') || document.body;
+  appContainer.appendChild(app.canvas);
+
+  // 2. Mission 1 Rulebook Specs
   const mission1: Mission = {
     id: 1,
-    title: "SQUEEZED COMPOUND INFRASTRUCTURE BREACH",
-    instructions: "Navigate past localized check barriers. Retrieve the target classified briefcase files.",
+    title: 'SQUEEZED COMPOUND INFRASTRUCTURE BREACH',
+    instructions: 'Navigate past localized check barriers. Retrieve the classified briefcase telemetry.',
     timeLimit: 180,
     targetScore: 1
   };
 
-  // System Core Flags
-  let isGameRunning = false;
+  let phase: GamePhase = 'BRIEFING';
   let timeRemaining = mission1.timeLimit;
-  let isInventoryPhaseActive = false; // Tracks if suit interface is visible
 
-  // --- 1. BUILD ENVIRONMENTAL MATRIX WALLS ("SANDWICHED IN-BETWEEN THINGS") ---
+  // --- 3. ENVIRONMENTAL MATRIX WALLS ---
   const environmentGroup = new Container();
   app.stage.addChild(environmentGroup);
 
-  // Left towering facility building block
-  const leftBuilding = new Graphics().rect(0, 0, 220, 540).fill({ color: 0x0e131f }).stroke({ width: 2, color: 0x1e293b });
-  // Right facility building block squeezing the open pathway tight
-  const rightBuilding = new Graphics().rect(740, 0, 220, 540).fill({ color: 0x0e131f }).stroke({ width: 2, color: 0x1e293b });
-  // Floor boundary plate
-  const baseFloor = new Graphics().rect(0, 500, 960, 40).fill({ color: 0x02040a });
+  // Background subtle grid lines
+  const gridLines = new Graphics();
+  for (let x = 240; x <= 720; x += 40) {
+    gridLines.moveTo(x, 0).lineTo(x, 500).stroke({ width: 1, color: 0x111c2e, alpha: 0.5 });
+  }
+  for (let y = 0; y <= 500; y += 40) {
+    gridLines.moveTo(240, y).lineTo(720, y).stroke({ width: 1, color: 0x111c2e, alpha: 0.5 });
+  }
+  environmentGroup.addChild(gridLines);
 
+  // Left & Right facility building barriers
+  const leftBuilding = new Graphics().rect(0, 0, 230, 540).fill({ color: 0x0a0f1d }).stroke({ width: 2, color: 0x1e293b });
+  const rightBuilding = new Graphics().rect(730, 0, 230, 540).fill({ color: 0x0a0f1d }).stroke({ width: 2, color: 0x1e293b });
+  const baseFloor = new Graphics().rect(0, 500, 960, 40).fill({ color: 0x02040a }).stroke({ width: 1, color: 0x1e293b });
   environmentGroup.addChild(leftBuilding, rightBuilding, baseFloor);
 
-  // --- 2. PROCEDURAL HERO VECTOR OBJECT ---
-  const heroDrone = new Graphics()
-    .circle(0, 0, 18)
-    .fill({ color: 0x00ffcc, alpha: 0.25 })
-    .stroke({ width: 3, color: 0x00ffcc });
+  // Boundary warning text
+  const leftWarning = new Text({
+    text: 'RESTRICTED PERIMETER\nSURVEILLANCE ACTIVE',
+    style: { fontFamily: 'Courier New', fontSize: 11, fill: 0x475569, align: 'center' }
+  });
+  leftWarning.x = 115; leftWarning.y = 260; leftWarning.anchor.set(0.5);
+  environmentGroup.addChild(leftWarning);
 
-  heroDrone.x = 280; // Start inside the open corridor path
-  heroDrone.y = 450;
+  const rightWarning = new Text({
+    text: 'AUTHORIZED AGENTS ONLY\nBIO-SCAN ENFORCED',
+    style: { fontFamily: 'Courier New', fontSize: 11, fill: 0x475569, align: 'center' }
+  });
+  rightWarning.x = 845; rightWarning.y = 260; rightWarning.anchor.set(0.5);
+  environmentGroup.addChild(rightWarning);
+
+  // --- 4. PROCEDURAL HERO OPERATIVE DRONE ---
+  const heroDrone = new Graphics()
+    .circle(0, 0, 16)
+    .fill({ color: 0x00ffcc, alpha: 0.25 })
+    .stroke({ width: 3, color: 0x00ffcc })
+    .circle(0, 0, 6)
+    .fill({ color: 0x00ffcc });
+
+  heroDrone.x = 290;
+  heroDrone.y = 440;
   app.stage.addChild(heroDrone);
 
-  // TARGET CLASSIFIED BRIEFCASE OBJECT
+  // --- 5. TARGET CLASSIFIED BRIEFCASE ---
   const briefcaseNode = new Graphics()
     .rect(-16, -10, 32, 20)
     .fill({ color: 0xf59e0b })
+    .stroke({ width: 2, color: 0xffffff })
+    .rect(-4, -13, 8, 4)
     .stroke({ width: 2, color: 0xffffff });
 
-  briefcaseNode.x = 680; // Hidden near the right structural building entry boundary line
-  briefcaseNode.y = 450;
+  briefcaseNode.x = 670;
+  briefcaseNode.y = 440;
   app.stage.addChild(briefcaseNode);
 
-  // Dynamic HUD readout panel text placement
+  // --- 6. TOP HUD TELEMETRY BAR ---
+  const hudContainer = new Container();
+  const hudBacking = new Graphics().rect(235, 10, 490, 48).fill({ color: 0x090e1a, alpha: 0.85 }).stroke({ width: 1, color: 0x1e293b });
   const hudText = new Text({
-    text: ``,
-    style: { fontFamily: 'Courier New', fontSize: 13, fill: 0x00ffcc }
+    text: '',
+    style: { fontFamily: 'Courier New', fontSize: 12, fill: 0x00ffcc }
   });
-  hudText.x = 240;
-  hudText.y = 25;
-  app.stage.addChild(hudText);
+  hudText.x = 248; hudText.y = 16;
+  hudContainer.addChild(hudBacking, hudText);
+  app.stage.addChild(hudContainer);
 
-  // --- 3. THE INTERACTIVE BRIEFCASE DIALOGUE PANEL CONTAINER ---
+  // --- 7. BRIEFING OVERLAY (Phase 2 Typing Terminal) ---
   const briefingOverlay = new Container();
   app.stage.addChild(briefingOverlay);
 
-  const backdropShield = new Graphics().rect(0, 0, 960, 540).fill({ color: 0x000000, alpha: 0.85 });
-  briefingOverlay.addChild(backdropShield);
-
-  const panelBox = new Graphics().rect(180, 120, 600, 300).fill({ color: 0x090d16 }).stroke({ width: 2, color: 0x00ffcc });
-  briefingOverlay.addChild(panelBox);
+  const briefingBackdrop = new Graphics().rect(0, 0, 960, 540).fill({ color: 0x000000, alpha: 0.88 });
+  const briefingBox = new Graphics().rect(180, 110, 600, 320).fill({ color: 0x070b14 }).stroke({ width: 2, color: 0x00ffcc });
+  const briefingTitle = new Text({
+    text: '[ PROTOCOL TERMINAL: MISSION DISPATCH ]',
+    style: { fontFamily: 'Courier New', fontSize: 14, fill: 0x00ffcc, fontWeight: 'bold' }
+  });
+  briefingTitle.x = 210; briefingTitle.y = 130;
 
   const dialogueDisplay = new Text({
     text: '',
-    style: { fontFamily: 'Courier New', fontSize: 15, fill: 0x00ffcc, wordWrap: true, wordWrapWidth: 540 }
+    style: { fontFamily: 'Courier New', fontSize: 13, fill: 0x94a3b8, wordWrap: true, wordWrapWidth: 540 }
   });
-  dialogueDisplay.x = 210;
-  dialogueDisplay.y = 150;
-  briefingOverlay.addChild(dialogueDisplay);
+  dialogueDisplay.x = 210; dialogueDisplay.y = 165;
 
-  const fullTextString = `[ INTERFACE INCOMING BRIEFING ]\n\nMISSION 01: ${mission1.title}\n\nINSTRUCTIONS: ${mission1.instructions}`;
-  let characterPointer = 0;
-  let textTimeCounter = 0;
+  briefingOverlay.addChild(briefingBackdrop, briefingBox, briefingTitle, dialogueDisplay);
 
-  // --- 4. THE INTERACTIVE LEFT POCKET INVENTORY INTERFACE CONSOLE ---
+  const fullPromptText =
+    `TARGET SECTOR: COMPOUND 01\n` +
+    `SECURITY THREAT: TIGHT CORRIDOR SURVEILLANCE\n\n` +
+    `OBJECTIVE: ${mission1.title}\n` +
+    `${mission1.instructions}\n\n` +
+    `CONTROLS: Use [Arrow Keys] or [W, A, S, D] to maneuver operative drone.`;
+
+  let charIndex = 0;
+  let textTicker = 0;
+
+  // --- 8. SUIT INVENTORY CONSOLE (Phase 3 Tactical HUD) ---
   const suitConsoleContainer = new Container();
   suitConsoleContainer.visible = false;
   app.stage.addChild(suitConsoleContainer);
 
-  // Dark screen overlay for inventory focus state
-  const inventoryShading = new Graphics().rect(0, 0, 960, 540).fill({ color: 0x000000, alpha: 0.8 });
-  const consoleBox = new Graphics().rect(280, 100, 400, 340).fill({ color: 0x060914 }).stroke({ width: 2, color: 0xf59e0b });
-  suitConsoleContainer.addChild(inventoryShading, consoleBox);
+  const invBackdrop = new Graphics().rect(0, 0, 960, 540).fill({ color: 0x000000, alpha: 0.85 });
+  const consoleBox = new Graphics().rect(260, 90, 440, 360).fill({ color: 0x050914 }).stroke({ width: 2, color: 0xf59e0b });
 
   const consoleTitle = new Text({
-    text: "--- SUIT LINK SATELLITE HUD ---",
-    style: { fontFamily: 'Courier New', fontSize: 16, fill: '#ffffff' }
+    text: '--- SUIT LINK HUD: ITEM EXTRACTION ---',
+    style: { fontFamily: 'Courier New', fontSize: 15, fill: 0xf59e0b, fontWeight: 'bold' }
   });
-  consoleTitle.x = 480; consoleTitle.y = 130; consoleTitle.anchor.set(0.5);
-  suitConsoleContainer.addChild(consoleTitle);
+  consoleTitle.x = 480; consoleTitle.y = 120; consoleTitle.anchor.set(0.5);
 
-  // Interactive Left Pocket Click Button Block Frame
-  const leftPocketButton = new Graphics().rect(330, 240, 300, 50).fill({ color: 0x1e1b4b }).stroke({ width: 1, color: 0xf59e0b });
-  leftPocketButton.interactive = true;
+  const consoleSubtitle = new Text({
+    text: 'BRIEFCASE REQUIRES AGENT CIPHER KEYCARD',
+    style: { fontFamily: 'Courier New', fontSize: 12, fill: 0x94a3b8 }
+  });
+  consoleSubtitle.x = 480; consoleSubtitle.y = 150; consoleSubtitle.anchor.set(0.5);
+
+  // Left Pocket Button
+  const leftPocketButton = new Graphics().rect(300, 210, 360, 56).fill({ color: 0x131d35 }).stroke({ width: 2, color: 0xf59e0b });
+  leftPocketButton.eventMode = 'static';
   leftPocketButton.cursor = 'pointer';
-  suitConsoleContainer.addChild(leftPocketButton);
 
   const buttonLabel = new Text({
-    text: "[ EXTRACT LEFT POCKET KEYCARD ]",
-    style: { fontFamily: 'Courier New', fontSize: 14, fill: 0xf59e0b }
+    text: '[ EXTRACT LEFT POCKET KEYCARD ]',
+    style: { fontFamily: 'Courier New', fontSize: 14, fill: 0xf59e0b, fontWeight: 'bold' }
   });
-  buttonLabel.x = 480; buttonLabel.y = 265; buttonLabel.anchor.set(0.5);
-  suitConsoleContainer.addChild(buttonLabel);
+  buttonLabel.x = 480; buttonLabel.y = 238; buttonLabel.anchor.set(0.5);
 
-  // Interactive button hover styling triggers
-  leftPocketButton.on('pointerover', () => buttonLabel.style.fill = '#00ffcc');
-  leftPocketButton.on('pointerout', () => buttonLabel.style.fill = '#f59e0b');
+  leftPocketButton.on('pointerover', () => {
+    buttonLabel.style.fill = 0x00ffcc;
+    leftPocketButton.tint = 0x1e293b;
+  });
+  leftPocketButton.on('pointerout', () => {
+    buttonLabel.style.fill = 0xf59e0b;
+    leftPocketButton.tint = 0xffffff;
+  });
 
-  // 5. Keyboard Input States Mapping
-  const activeControlKeys: { [key: string]: boolean } = {};
-  window.addEventListener('keydown', (e) => activeControlKeys[e.key] = true);
-  window.addEventListener('keyup', (e) => activeControlKeys[e.key] = false);
+  suitConsoleContainer.addChild(invBackdrop, consoleBox, consoleTitle, consoleSubtitle, leftPocketButton, buttonLabel);
 
-  // 6. HIGH PERFORMANCE GPU TICKER RENDERING TIMELINE LOOP [2.4]
+  // --- 9. INPUT HANDLING ---
+  const activeKeys: Record<string, boolean> = {};
+  window.addEventListener('keydown', (e) => {
+    activeKeys[e.key] = true;
+    activeKeys[e.code] = true;
+  });
+  window.addEventListener('keyup', (e) => {
+    activeKeys[e.key] = false;
+    activeKeys[e.code] = false;
+  });
+
+  // Left pocket click handler
+  leftPocketButton.once('pointerdown', () => {
+    sfx.playSuccess();
+    suitConsoleContainer.visible = false;
+    briefcaseNode.visible = false;
+    phase = 'MISSION_CLEAR';
+
+    const clearBanner = new Container();
+    const bannerBox = new Graphics().rect(220, 160, 520, 220).fill({ color: 0x030712, alpha: 0.95 }).stroke({ width: 2, color: 0x00ffcc });
+    const clearTitle = new Text({
+      text: 'MISSION 01 COMPLETED\n\nKEYCARD VERIFIED OUT OF SUIT POCKET\nCLASSIFIED RECORD SECURED',
+      style: { fontFamily: 'Courier New', fontSize: 18, fill: 0x00ffcc, align: 'center', fontWeight: 'bold' }
+    });
+    clearTitle.x = 480; clearTitle.y = 250; clearTitle.anchor.set(0.5);
+    clearBanner.addChild(bannerBox, clearTitle);
+    app.stage.addChild(clearBanner);
+  });
+
+  // --- 10. MAIN GAME LOOP ---
+  let pulseTimer = 0;
+
   app.ticker.add((ticker) => {
-    // Dialogue sequence update ticks
-    if (!isGameRunning && !isInventoryPhaseActive) {
-      textTimeCounter += ticker.deltaMS;
-      if (textTimeCounter >= 25 && characterPointer < fullTextString.length) {
-        dialogueDisplay.text += fullTextString[characterPointer];
-        characterPointer++;
-        textTimeCounter = 0;
+    pulseTimer += ticker.deltaMS * 0.003;
+
+    // A. Briefing Typing Phase
+    if (phase === 'BRIEFING') {
+      textTicker += ticker.deltaMS;
+      if (textTicker >= 20 && charIndex < fullPromptText.length) {
+        dialogueDisplay.text += fullPromptText[charIndex];
+        if (charIndex % 3 === 0) sfx.playType();
+        charIndex++;
+        textTicker = 0;
       }
-      if (characterPointer >= fullTextString.length) {
-        dialogueDisplay.text = fullTextString + `\n\n\n[ TAP 'SPACEBAR' TO INITIALIZE OPERATIONS ]`;
-        if (activeControlKeys[' ']) {
+
+      if (charIndex >= fullPromptText.length) {
+        dialogueDisplay.text = fullPromptText + '\n\n>>> PRESS [SPACEBAR] TO DEPLOY OPERATIVE <<<';
+        if (activeKeys[' '] || activeKeys['Space']) {
+          sfx.playAction();
           briefingOverlay.visible = false;
-          isGameRunning = true;
+          phase = 'PLAYING';
         }
       }
       return;
     }
 
-    // Halt timeline frame iterations if user is actively browsing their pocket inventory module grid
-    if (isInventoryPhaseActive) return;
+    // B. Inventory Active Phase (Pause drone movement)
+    if (phase === 'INVENTORY' || phase === 'MISSION_CLEAR') return;
 
-    // Player multi-directional vector flight controls
+    // C. Playing Phase
     const stepVelocity = 5 * ticker.deltaTime;
-    if (activeControlKeys['ArrowLeft']) heroDrone.x -= stepVelocity;
-    if (activeControlKeys['ArrowRight']) heroDrone.x += stepVelocity;
-    if (activeControlKeys['ArrowUp']) heroDrone.y -= stepVelocity;
-    if (activeControlKeys['ArrowDown']) heroDrone.y += stepVelocity;
 
-    // Keep drone contained inside our narrow, squeezed air-corridor path coordinates layout boundaries
-    if (heroDrone.x < 240) heroDrone.x = 240;
-    if (heroDrone.x > 720) heroDrone.x = 720;
+    if (activeKeys['ArrowLeft'] || activeKeys['KeyA'] || activeKeys['a']) heroDrone.x -= stepVelocity;
+    if (activeKeys['ArrowRight'] || activeKeys['KeyD'] || activeKeys['d']) heroDrone.x += stepVelocity;
+    if (activeKeys['ArrowUp'] || activeKeys['KeyW'] || activeKeys['w']) heroDrone.y -= stepVelocity;
+    if (activeKeys['ArrowDown'] || activeKeys['KeyS'] || activeKeys['s']) heroDrone.y += stepVelocity;
+
+    // Enforce corridor movement boundaries
+    if (heroDrone.x < 250) heroDrone.x = 250;
+    if (heroDrone.x > 710) heroDrone.x = 710;
+    if (heroDrone.y < 40) heroDrone.y = 40;
     if (heroDrone.y > 480) heroDrone.y = 480;
-    if (heroDrone.y < 20) heroDrone.y = 20;
 
-    timeRemaining -= ticker.deltaMS / 1000;
-    hudText.text = `OPERATIVE RADAR TELEMETRY\nCHRONO TIME LIMIT: ${Math.ceil(timeRemaining)}s\nSECTOR SCAN STATUS: SQUEEZED IN-BETWEEN DEFENSE BUILDINGS`;
+    // Briefcase pulse animation
+    briefcaseNode.scale.set(1 + Math.sin(pulseTimer) * 0.05);
 
-    // Proximity contact detection between drone and amber briefcase item block
-    const distanceDelta = Math.hypot(heroDrone.x - briefcaseNode.x, heroDrone.y - briefcaseNode.y);
+    // Timer countdown
+    timeRemaining = Math.max(0, timeRemaining - ticker.deltaMS / 1000);
+    hudText.text =
+      `GRID TELEMETRY // STATUS: ACTIVE // CHRONO: ${Math.ceil(timeRemaining)}s\n` +
+      `CORRIDOR: SECTOR-01 // COORD: [${Math.round(heroDrone.x)}, ${Math.round(heroDrone.y)}]`;
 
-    if (distanceDelta < 32 && briefcaseNode.visible) {
-      // Trigger the unique interactive suit inventory console screen phase!
-      isGameRunning = false;
-      isInventoryPhaseActive = true;
+    // Proximity trigger to Briefcase
+    const distance = Math.hypot(heroDrone.x - briefcaseNode.x, heroDrone.y - briefcaseNode.y);
+    if (distance < 36 && briefcaseNode.visible) {
+      sfx.playAction();
+      phase = 'INVENTORY';
       suitConsoleContainer.visible = true;
-
-      // Clicking the Left Pocket button fires final data decryption logs and wraps up the level metrics rules
-      leftPocketButton.once('pointerdown', () => {
-        suitConsoleContainer.visible = false;
-        briefcaseNode.visible = false;
-        isInventoryPhaseActive = false;
-        (window as any)?.sound?.play?.('sfx_boom', { volume: 0.6 });
-
-        const clearTitle = new Text({
-          text: 'KEYCARD VERIFIED OUT OF SUIT LEFT POCKET\nCLASSIFIED RECORD SECURED SUCCESSFULLY\n\nMISSION 1 CLEAR',
-          style: { fontFamily: 'Courier New', fontSize: 22, fill: 0x00ffcc, align: 'center', fontWeight: 'bold' }
-        });
-        clearTitle.x = 480; clearTitle.y = 270;
-        clearTitle.anchor.set(0.5);
-        app.stage.addChild(clearTitle);
-      });
     }
   });
 })();
