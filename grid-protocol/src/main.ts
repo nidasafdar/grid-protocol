@@ -420,7 +420,7 @@ function formatTimer(seconds: number): string {
   const app = new Application();
   await app.init({
     resizeTo: canvasContainer,
-    backgroundColor: 0x030712,
+    backgroundAlpha: 0,
     preference: 'webgpu'
   });
 
@@ -449,20 +449,20 @@ function formatTimer(seconds: number): string {
   worldContainer.addChild(biomesLayer);
 
   // Biome 1: Lush Greenery Zone (Parrot Green: X: 0 to 1400)
-  biomesLayer.rect(0, 0, 1400, worldHeight).fill({ color: 0x081e18 });
+  biomesLayer.rect(0, 0, 1400, worldHeight).fill({ color: 0x081e18, alpha: 0.55 });
   // Lush River Artery
   biomesLayer.moveTo(0, 700).bezierCurveTo(400, 650, 800, 850, 1400, 780).stroke({ width: 44, color: 0x0284c7, alpha: 0.6 });
   biomesLayer.moveTo(0, 700).bezierCurveTo(400, 650, 800, 850, 1400, 780).stroke({ width: 28, color: 0x38bdf8, alpha: 0.8 });
 
   // Biome 2: Petroleum Sump Wasteland (Gray/Black: X: 1400 to 2300)
-  biomesLayer.rect(1400, 0, 900, worldHeight).fill({ color: 0x0f131a });
+  biomesLayer.rect(1400, 0, 900, worldHeight).fill({ color: 0x0f131a, alpha: 0.6 });
   // Bubbling Crude Pitch Tar pools
   biomesLayer.ellipse(1700, 450, 120, 70).fill({ color: 0x020305 }).stroke({ width: 4, color: 0x1e293b });
   biomesLayer.ellipse(1950, 1100, 150, 90).fill({ color: 0x020305 }).stroke({ width: 4, color: 0x1e293b });
   biomesLayer.ellipse(1600, 1600, 110, 60).fill({ color: 0x020305 }).stroke({ width: 4, color: 0x1e293b });
 
   // Biome 3: Delta Basin & River Dam (Maroon/Red: X: 2300 to 3200)
-  biomesLayer.rect(2300, 0, 900, worldHeight).fill({ color: 0x1c0b0b });
+  biomesLayer.rect(2300, 0, 900, worldHeight).fill({ color: 0x1c0b0b, alpha: 0.6 });
   biomesLayer.ellipse(2800, 900, 240, 360).fill({ color: 0x1e3a5f }).stroke({ width: 8, color: 0x991b1b });
 
   // Biome Text Labels

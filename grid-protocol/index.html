@@ -10,9 +10,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Cinzel:wght@600;700;900&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- 🏰 STRONGHOLD 1 HD LOADING SCREEN -->
+    <div id="sh1-loading-screen">
+      <div class="sh1-bg-fill"></div>
+      <div class="sh1-vignette"></div>
+      <div class="sh1-castle-icon">🏰</div>
+      <div class="sh1-title">
+        <h1>GRID PROTOCOL</h1>
+        <p>Castle &amp; Empire Matrix &mdash; 11,000 km²</p>
+      </div>
+      <div class="sh1-loading-bar-wrap">
+        <div class="sh1-loading-bar">
+          <div class="sh1-loading-bar-fill"></div>
+        </div>
+        <div class="sh1-loading-label">LOADING STRONGHOLD DATA&hellip;</div>
+      </div>
+    </div>
+
     <div id="game-root">
       <!-- LEFT PANEL (70%): WEBGPU HARDWARE RENDERING VIEWPORT -->
       <main id="viewport-panel">
+        <!-- 🏰 STRONGHOLD 1 HD ROTATING BACKGROUND PANORAMA -->
+        <div id="sh1-viewport-bg">
+          <div class="sh1-slide sh1-s1 active"></div>
+          <div class="sh1-slide sh1-s2"></div>
+          <div class="sh1-slide sh1-s3"></div>
+          <div class="sh1-slide sh1-s4"></div>
+          <div class="sh1-slide sh1-s5"></div>
+          <div class="sh1-darken"></div>
+        </div>
+
         <div id="canvas-container"></div>
         
         <!-- Viewport Floating Telemetry Bar -->
@@ -736,5 +763,25 @@
     </div>
 
     <script type="module" src="/src/main.ts"></script>
+
+    <!-- 🏰 Stronghold 1 HD Background Slideshow Rotator -->
+    <script>
+      (function() {
+        const slides = document.querySelectorAll('#sh1-viewport-bg .sh1-slide');
+        if (!slides.length) return;
+        let current = 0;
+
+        function nextSlide() {
+          slides[current].classList.remove('active');
+          current = (current + 1) % slides.length;
+          slides[current].classList.add('active');
+        }
+
+        // Start rotating after loading screen fades (2.2s + 0.8s = 3s)
+        setTimeout(function() {
+          setInterval(nextSlide, 8000);
+        }, 3000);
+      })();
+    </script>
   </body>
 </html>

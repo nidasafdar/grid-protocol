@@ -42,6 +42,183 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* =========================================================================
+   🏰 STRONGHOLD 1 HD BACKGROUND SYSTEM
+   7 real Stronghold 1 HD screenshots rotating as game backgrounds
+   ========================================================================= */
+
+/* Loading Screen — Stronghold 1 Style */
+#sh1-loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: sh1-fadeout 0.8s ease-out 2.2s forwards;
+  pointer-events: none;
+}
+
+#sh1-loading-screen .sh1-bg-fill {
+  position: absolute;
+  inset: 0;
+  background: url('/backgrounds/sh1_bg4.jpg') center/cover no-repeat;
+  filter: brightness(0.45) saturate(0.8);
+}
+
+#sh1-loading-screen .sh1-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%);
+}
+
+#sh1-loading-screen .sh1-title {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+#sh1-loading-screen .sh1-title h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  color: #f59e0b;
+  text-shadow: 0 0 40px rgba(245, 158, 11, 0.8), 0 4px 20px rgba(0,0,0,0.9);
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+  animation: sh1-titlerise 0.9s ease-out both;
+}
+
+#sh1-loading-screen .sh1-title p {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(248,250,252,0.7);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  animation: sh1-titlerise 0.9s ease-out 0.2s both;
+}
+
+#sh1-loading-screen .sh1-castle-icon {
+  position: relative;
+  z-index: 1;
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  animation: sh1-castlebob 1.8s ease-in-out infinite;
+}
+
+#sh1-loading-screen .sh1-loading-bar-wrap {
+  position: relative;
+  z-index: 1;
+  margin-top: 28px;
+  width: min(360px, 70vw);
+}
+
+#sh1-loading-screen .sh1-loading-bar {
+  height: 4px;
+  background: rgba(245,158,11,0.15);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(245,158,11,0.3);
+}
+
+#sh1-loading-screen .sh1-loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #fcd34d, #f59e0b);
+  background-size: 200% 100%;
+  animation: sh1-barfill 2s ease-out forwards, sh1-barshine 1s linear infinite;
+  border-radius: 4px;
+}
+
+#sh1-loading-screen .sh1-loading-label {
+  margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(245,158,11,0.7);
+  letter-spacing: 0.2em;
+  text-align: center;
+  animation: sh1-blink 1.2s step-end infinite;
+}
+
+@keyframes sh1-fadeout {
+  from { opacity: 1; visibility: visible; }
+  to   { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+@keyframes sh1-titlerise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes sh1-castlebob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes sh1-barfill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+@keyframes sh1-barshine {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+@keyframes sh1-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* Viewport background — Stronghold 1 HD panorama behind the WebGPU canvas */
+#sh1-viewport-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+#sh1-viewport-bg .sh1-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.8s ease-in-out;
+  will-change: opacity;
+}
+
+#sh1-viewport-bg .sh1-slide.active {
+  opacity: 1;
+}
+
+#sh1-viewport-bg .sh1-slide.sh1-s1 { background-image: url('/backgrounds/sh1_bg1.jpg'); }
+#sh1-viewport-bg .sh1-slide.sh1-s2 { background-image: url('/backgrounds/sh1_bg2.jpg'); }
+#sh1-viewport-bg .sh1-slide.sh1-s3 { background-image: url('/backgrounds/sh1_bg3.jpg'); }
+#sh1-viewport-bg .sh1-slide.sh1-s4 { background-image: url('/backgrounds/sh1_bg4.jpg'); }
+#sh1-viewport-bg .sh1-slide.sh1-s5 { background-image: url('/backgrounds/sh1_bg5.jpg'); }
+
+/* Dark overlay so PixiJS canvas renders clearly on top */
+#sh1-viewport-bg .sh1-darken {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 5, 11, 0.55);
+  backdrop-filter: brightness(0.9);
+}
+
+/* Sidebar medieval parchment texture overlay */
+#sidebar-panel {
+  position: relative;
+}
+
+#sidebar-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/backgrounds/sh1_bg7.jpg') center/cover no-repeat;
+  opacity: 0.06;
+  z-index: 0;
+  pointer-events: none;
+  filter: sepia(0.6) saturate(0.4);
+}
+
 /* Master 70/30 Split-Screen Shell */
 #game-root {
   display: flex;
@@ -64,13 +241,15 @@ html, body {
   border-right: 2px solid #1e293b;
 }
 
+/* Canvas container sits ABOVE the sh1 background slideshow */
+
 #canvas-container {
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 #canvas-container canvas {
